@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div
       sx={{
-        height: "100VH",
+        height: "100%",
         bg: "muted",
       }}
     ></div>

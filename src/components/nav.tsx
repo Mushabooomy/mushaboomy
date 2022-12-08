@@ -21,11 +21,13 @@ const Nav = () => (
         width: "100%",
       }}
     >
-      <Link href="/">
-        <a sx={{ fontWeight: "bold", fontSize: 4, cursor: "pointer" }}>
-          🍄 MUSH-A-BOOM! 🍄
-        </a>
+      <Link
+        href="/"
+        sx={{ fontWeight: "bold", fontSize: 4, cursor: "pointer" }}
+      >
+        🍄 MUSH-A-BOOM! 🍄
       </Link>
+      <Link href="/addmushroom/">Add a Mushroom</Link>
     </nav>
   </header>
 );
