@@ -1,13 +1,13 @@
-import { React, useState } from "react";
+import { useState } from "react";
+import type { AppProps } from "next/app";
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import { jsx } from "theme-ui";
 import { ThemeProvider } from "theme-ui";
 import theme from "../styles/theme";
-import Nav from "../src/components/nav";
-import type { AppProps } from "next/app";
-import Head from "next/head";
 import "../styles/globals.css";
+import Nav from "../src/components/nav";
+import Head from "next/head";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 
