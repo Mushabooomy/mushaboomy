@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import { jsx } from "theme-ui";
@@ -8,10 +8,21 @@ import Nav from "../src/components/nav";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import "../styles/globals.css";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<{ initialSession: Session }>) {
+  // Create a new supabase browser client on every first render.
+  const [supabase] = useState(() => createBrowserSupabaseClient());
+
   return (
-    <>
+    <SessionContextProvider
+      supabaseClient={supabase}
+      initialSession={pageProps.initialSession}
+    >
       <Head>
         <title>MUSH-A-BOOM!</title>
         <meta name="description" content="Mushroom cataloging application" />
@@ -21,6 +32,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <Nav />
         <Component {...pageProps} />
       </ThemeProvider>
-    </>
+    </SessionContextProvider>
   );
 }
