@@ -1,8 +1,7 @@
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Flex, Box, Button, Label, Input, Textarea, Radio } from 'theme-ui'
+import { Box, Button, Input } from 'theme-ui'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { PostgrestBuilder } from '@supabase/postgrest-js'
 
 interface Post {
   content: string
@@ -52,6 +51,9 @@ const AddMushroom = () => {
 
   const deletePost = async (id:number) => {
     const { error } = await supabase.from('posts').delete().eq('id', id)
+    if (error) {
+      throw(error)
+    }
     getData()
   }
 
