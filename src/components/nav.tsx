@@ -1,40 +1,51 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
-import { jsx } from "theme-ui";
-import Link from "next/link";
+import { jsx } from 'theme-ui'
+import Link from 'next/link'
 
-const Nav = () => (
-  <header
-    sx={{
-      bg: "primary",
-      height: "60px",
-      width: "100%",
-    }}
-  >
-    <nav
+const Nav = () => {
+
+  console.log('nav')
+  
+  return (
+    <header
       sx={{
-        alignItems: "center",
-        display: "flex",
-        height: "100%",
-        justifyContent: "space-between",
-        padding: "25px",
-        width: "100VW",
+        bg: 'primary',
+        height: '60px',
+        width: '100%',
       }}
     >
-      <Link
-        href="/"
-        sx={{ fontWeight: "bold", fontSize: 4, cursor: "pointer" }}
+      <nav
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          height: '100%',
+          justifyContent: 'space-between',
+          padding: '25px',
+          width: '100VW',
+        }}
       >
-        MUSH-A-BOOM!
-      </Link>
-      <Link
-        href="/addmushroom/"
-        sx={{ fontWeight: "bold", fontSize: 3, cursor: "pointer" }}
-      >
-        + 🍄
-      </Link>
-    </nav>
-  </header>
-);
+        <Link
+          href="/"
+          sx={{ fontWeight: 'bold', fontSize: 4, cursor: 'pointer' }}
+        >
+          MUSH-A-BOOM!
+        </Link>
+        <Link
+          href="/addmushroom/"
+          sx={{ fontWeight: 'bold', fontSize: 3, cursor: 'pointer' }}
+        >
+          + 🍄
+        </Link>
+        <Link
+          href="/posts/"
+          sx={{ fontWeight: 'bold', fontSize: 3, cursor: 'pointer' }}
+        >
+          Posts
+        </Link>
+      </nav>
+    </header>
+  )
+}
 
-export default Nav;
+export default Nav
