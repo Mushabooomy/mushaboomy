@@ -1,7 +1,7 @@
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Flex, Box, Button, Label, Input, Textarea, Radio } from 'theme-ui'
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { PostgrestBuilder } from '@supabase/postgrest-js'
 
 interface Post {
@@ -20,7 +20,11 @@ const AddMushroom = () => {
   const supabase = useSupabaseClient()
   const [posts, setPosts] = useState<Post[]>([])
   const [postText, setPostText] = useState('')
-  console.log(session)
+
+  useEffect(() => {
+    getData()
+  }, [posts])
+  
 
   const getData = async () => {
     console.log('get')
@@ -42,6 +46,7 @@ const AddMushroom = () => {
         user_email: session?.user.email,
       },
     ])
+    getData()
     console.log('status', status)
   }
 
@@ -66,9 +71,8 @@ const AddMushroom = () => {
       ) : (
         <Box>
           POSTS<br />
-          <Button onClick={() => getData()}> Get Posts</Button><br />
           <Input id="newPost" onInput={(e)=>{handleInput(e)}}></Input>
-          <Button onClick={() => writeData()}> Write Posts</Button><br />
+          <Button onClick={() => writeData()}> Write Post</Button><br />
           <ul style={{listStyle: 'none'}}>
             {posts.map((post) => (
               <li key={post.id}>
