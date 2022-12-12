@@ -22,7 +22,7 @@ const AddMushroom = () => {
 
   useEffect(() => {
     getData()
-  }, [posts])
+  }, [])
   
 
   const getData = async () => {
@@ -57,6 +57,16 @@ const AddMushroom = () => {
     getData()
   }
 
+  const viewPost = async (id:number) => {
+    const { data, error } = await supabase.from('posts').select()
+    .eq('id', id) 
+    if (data) {
+      await setPosts(data as [])
+    }
+    console.log('data', posts)
+    console.log('error', error)
+  }
+
   const handleInput = (e: SyntheticEvent) => {
     const input = (e.currentTarget as HTMLInputElement).value
     setPostText(input)
@@ -81,6 +91,7 @@ const AddMushroom = () => {
                 ID: {post.id} <br />
                 Text: {post.content}<br />
                 <Button onClick={() => deletePost(post.id)}>delete</Button>
+                <Button onClick={() => viewPost(post.id)}>view</Button>
               </li>
             ))}
           </ul>
