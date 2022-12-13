@@ -18,6 +18,8 @@ export default function App({
   // Create a new supabase browser client on every first render.
   const [supabase] = useState(() => createBrowserSupabaseClient());
 
+  console.log('app')
+
   return (
     <SessionContextProvider
       supabaseClient={supabase}
