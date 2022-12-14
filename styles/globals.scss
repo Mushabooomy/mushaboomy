@@ -14,3 +14,13 @@ a {
 * {
   box-sizing: border-box;
 }
+
+//Flexbox
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
