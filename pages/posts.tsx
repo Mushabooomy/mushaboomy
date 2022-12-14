@@ -1,79 +1,76 @@
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Box, Button, Input } from 'theme-ui'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 interface Post {
-  content: string
-  id: number
-  inserted_at: string
-  title: string
-  user_email: string
-  user_id: string
+  content: string;
+  id: number;
+  inserted_at: string;
+  title: string;
+  user_email: string;
+  user_id: string;
 }
 
 const AddMushroom = () => {
-  console.log('posts')
+  console.log("posts");
 
-  const session = useSession()
-  const supabase = useSupabaseClient()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [postText, setPostText] = useState('')
+  const session = useSession();
+  const supabase = useSupabaseClient();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postText, setPostText] = useState("");
 
   useEffect(() => {
-    getData()
-  }, [])
-  
+    getData();
+  }, []);
 
   const getData = async () => {
-    console.log('get')
-    const { data, error } = await supabase.from('posts').select()
+    console.log("get");
+    const { data, error } = await supabase.from("posts").select();
     if (data) {
-      await setPosts(data as [])
+      await setPosts(data as []);
     }
-    console.log('data', posts)
-    console.log('error', error)
-  }
+    console.log("data", posts);
+    console.log("error", error);
+  };
 
   const writeData = async () => {
-    console.log('insert ')
-    const { status } = await supabase.from('posts').insert([
+    console.log("insert ");
+    const { status } = await supabase.from("posts").insert([
       {
-        title: 'Hello World',
+        title: "Hello World",
         content: postText,
         user_id: session?.user.id,
         user_email: session?.user.email,
       },
-    ])
-    getData()
-    console.log('status', status)
-  }
+    ]);
+    getData();
+    console.log("status", status);
+  };
 
-  const deletePost = async (id:number) => {
-    const { error } = await supabase.from('posts').delete().eq('id', id)
+  const deletePost = async (id: number) => {
+    const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) {
-      throw(error)
+      throw error;
     }
-    getData()
-  }
+    getData();
+  };
 
-  const viewPost = async (id:number) => {
-    const { data, error } = await supabase.from('posts').select()
-    .eq('id', id) 
+  const viewPost = async (id: number) => {
+    const { data, error } = await supabase.from("posts").select().eq("id", id);
     if (data) {
-      await setPosts(data as [])
+      await setPosts(data as []);
     }
-    console.log('data', posts)
-    console.log('error', error)
-  }
+    console.log("data", posts);
+    console.log("error", error);
+  };
 
   const handleInput = (e: SyntheticEvent) => {
-    const input = (e.currentTarget as HTMLInputElement).value
-    setPostText(input)
-  }
+    const input = (e.currentTarget as HTMLInputElement).value;
+    setPostText(input);
+  };
 
   return (
-    <div className="container" style={{ padding: '50px 0 100px 0' }}>
+    <div className="container" style={{ padding: "50px 0 100px 0" }}>
       {!session ? (
         <Auth
           supabaseClient={supabase}
@@ -81,24 +78,32 @@ const AddMushroom = () => {
           theme="default"
         />
       ) : (
-        <Box>
-          POSTS<br />
-          <Input id="newPost" onInput={(e)=>{handleInput(e)}}></Input>
-          <Button onClick={() => writeData()}> Write Post</Button><br />
-          <ul style={{listStyle: 'none'}}>
+        <div>
+          POSTS
+          <br />
+          <input
+            id="newPost"
+            onInput={(e) => {
+              handleInput(e);
+            }}
+          ></input>
+          <button onClick={() => writeData()}> Write Post</button>
+          <br />
+          <ul style={{ listStyle: "none" }}>
             {posts.map((post) => (
               <li key={post.id}>
                 ID: {post.id} <br />
-                Text: {post.content}<br />
-                <Button onClick={() => deletePost(post.id)}>delete</Button>
-                <Button onClick={() => viewPost(post.id)}>view</Button>
+                Text: {post.content}
+                <br />
+                <button onClick={() => deletePost(post.id)}>delete</button>
+                <button onClick={() => viewPost(post.id)}>view</button>
               </li>
             ))}
           </ul>
-        </Box>
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AddMushroom
+export default AddMushroom;

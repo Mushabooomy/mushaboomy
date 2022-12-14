@@ -1,10 +1,5 @@
 import { useState } from "react";
 import type { AppProps } from "next/app";
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { jsx } from "theme-ui";
-import { ThemeProvider } from "theme-ui";
-import theme from "../styles/theme";
 import "../styles/globals.css";
 import Nav from "../src/components/nav";
 import Head from "next/head";
@@ -18,7 +13,7 @@ export default function App({
   // Create a new supabase browser client on every first render.
   const [supabase] = useState(() => createBrowserSupabaseClient());
 
-  console.log('app')
+  console.log("app");
 
   return (
     <SessionContextProvider
@@ -30,10 +25,8 @@ export default function App({
         <meta name="description" content="Mushroom cataloging application" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ThemeProvider theme={theme}>
-        <Nav />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <Nav />
+      <Component {...pageProps} />
     </SessionContextProvider>
   );
 }
