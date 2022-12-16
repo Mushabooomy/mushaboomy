@@ -1,7 +1,8 @@
-import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+// import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+// import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+// import { useState, useEffect } from "react";
+// import { useRouter } from "next/router";
+import supabase from "../../utils/supabaseClient";
 
 const MushroomPage = (mushroom) => {
   // const supabase = useSupabaseClient();
