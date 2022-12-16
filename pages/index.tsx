@@ -1,11 +1,7 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { jsx, Box, Paragraph } from "theme-ui";
-
 const Home = () => {
   return (
-    <Box>
-      <Paragraph>
+    <div>
+      <p>
         MUSH-A-BOOM! is a mushroom cataloging web application that is a useful
         tool for anyone interested in mushrooms. It allows users to create a
         catalog of the different types of mushrooms they have encountered,
@@ -17,8 +13,8 @@ const Home = () => {
         experienced mushroom enthusiasts. With the ability to add and organize
         mushrooms in the catalog, users can keep track of their findings and
         continue to learn more about these fascinating organisms.
-      </Paragraph>
-    </Box>
+      </p>
+    </div>
   );
 };
 

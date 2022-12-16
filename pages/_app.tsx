@@ -1,15 +1,10 @@
-import { useState } from 'react'
-import type { AppProps } from 'next/app'
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { jsx } from 'theme-ui'
-import { ThemeProvider } from 'theme-ui'
-import theme from '../styles/theme'
-import '../styles/globals.css'
-import Nav from '../src/components/nav'
-import Head from 'next/head'
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
-import { SessionContextProvider, Session } from '@supabase/auth-helpers-react'
+import { useState } from "react";
+import type { AppProps } from "next/app";
+import "../styles/globals.css";
+import Nav from "../src/components/nav";
+import Head from "next/head";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 
 export default function App({
   Component,
@@ -17,6 +12,8 @@ export default function App({
 }: AppProps<{ initialSession: Session }>) {
   // Create a new supabase browser client on every first render.
   const [supabase] = useState(() => createBrowserSupabaseClient())
+
+  console.log("app");
 
   return (
     <SessionContextProvider
@@ -36,10 +33,8 @@ export default function App({
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
       </Head>
-      <ThemeProvider theme={theme}>
-        <Nav />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <Nav />
+      <Component {...pageProps} />
     </SessionContextProvider>
   )
 }
