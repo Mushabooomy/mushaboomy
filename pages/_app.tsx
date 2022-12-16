@@ -19,6 +19,7 @@ export default function App({
     <SessionContextProvider
       supabaseClient={supabase}
       initialSession={pageProps.initialSession}
+      supbase={supabase}
     >
       <Head>
         <title>MUSH-A-BOOM!</title>

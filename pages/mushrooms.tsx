@@ -43,7 +43,7 @@ const Mushrooms = () => {
         <ul>
           {mushrooms.map((mushroom) => (
             <li key={mushroom.id}>
-              <Link key={mushroom.id} href={`mushrooms/${mushroom.id}`}>
+              <Link key={mushroom.id} href={`/${mushroom.id}`}>
                 {mushroom.id}
               </Link>
             </li>
