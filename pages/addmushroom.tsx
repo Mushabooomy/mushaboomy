@@ -1,15 +1,15 @@
-import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/router";
-import { Flex, Box, Button, Label, Input, Textarea, Radio } from "theme-ui";
+import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useRouter } from 'next/router'
+import { Flex, Box, Button, Label, Input, Textarea, Radio } from 'theme-ui'
 
 const AddMushroom = () => {
-  const session = useSession();
-  const supabase = useSupabaseClient();
-  const router = useRouter();
+  const session = useSession()
+  const supabase = useSupabaseClient()
+  const router = useRouter()
 
   return (
-    <div className="container" style={{ padding: "50px 0 100px 0" }}>
+    <div className="container">
       {!session ? (
         <Auth
           supabaseClient={supabase}
@@ -17,7 +17,7 @@ const AddMushroom = () => {
           theme="default"
         />
       ) : (
-        <form>
+        <>
           <Box as="form" onSubmit={(e) => e.preventDefault}>
             <Label htmlFor="scientificname">Scientific Name</Label>
             <Input name="scientificname" id="scientificname" />
@@ -50,16 +50,16 @@ const AddMushroom = () => {
           </Box>
           <Button
             onClick={async () => {
-              await supabase.auth.signOut();
-              await router.push("/");
+              await supabase.auth.signOut()
+              await router.push('/')
             }}
           >
             Sign out
           </Button>
-        </form>
+        </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AddMushroom;
+export default AddMushroom

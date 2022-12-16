@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 1rem;
+  margin: 0;
+  background-image: url('../src/k8-yQLlLCIoEWc-unsplash.jpeg');
+  background-position: center;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+nav {
+  background-color: rgba(41, 120, 20, 0.95);
+  border-radius: 2rem;
+  padding: 1rem;
+  margin: 0 0 2rem 0;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav h1 {
+  font-size: 2.5rem;
+  font-family: 'Rubik Puddles', cursive;
+  color: white;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-size: 2rem;
+  border-radius: 1.25rem;
+  padding: 0.5rem 1rem;
+
+  &.add {
+    border: 1px solid orange;
+  }
+}
+
+main p,
+form {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 1rem;
+  border-radius: 1rem;
+  margin: 0;
+  width: 400px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 800px) {
+  .container {
+    align-items: flex-start;
+  }
+}
