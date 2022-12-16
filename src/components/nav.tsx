@@ -8,7 +8,7 @@ const Nav = () => {
       <nav>
         <Link href="/">MUSH-A-BOOM!</Link>
         <Link href="/addmushroom/">+ 🍄</Link>
-        <Link href="/posts/">Posts</Link>
+        <Link href="/mushrooms/">Mushrooms</Link>
       </nav>
     </header>
   );
