@@ -1,19 +1,20 @@
-import { useState } from "react";
-import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { ChangeEvent, useState } from 'react'
+import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { Mushroom } from './mushrooms';
 
 const AddMushroom = () => {
-  const session = useSession();
-  const supabase = useSupabaseClient();
-  const [loading, setLoading] = useState(true);
-  const [scientificName, setScienctificName] = useState("");
-  const [commonName, setCommonName] = useState("");
-  const [description, setDescription] = useState("");
-  const [sporePrint, setSporePrint] = useState("");
-  const [edibility, setEdibility] = useState("");
-  const [edibilityNotes, setEdibilityNotes] = useState("");
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState("");
+  const session = useSession()
+  const supabase = useSupabaseClient()
+  // const [loading, setLoading] = useState(true)
+  const [scientificName, setScienctificName] = useState('')
+  const [commonName, setCommonName] = useState('')
+  const [description, setDescription] = useState('')
+  const [sporePrint, setSporePrint] = useState('')
+  const [edibility, setEdibility] = useState('')
+  const [edibilityNotes, setEdibilityNotes] = useState('')
+  // const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState('')
 
   const addMushroom = async ({
     scientificName,
@@ -22,17 +23,9 @@ const AddMushroom = () => {
     sporePrint,
     edibility,
     edibilityNotes,
-  }: {
-    scientificName: string;
-    commonName: string;
-    description: string;
-    sporePrint: string;
-    edibility: string;
-    edibilityNotes: string;
-    photoUrl: string;
-  }) => {
+  }: Mushroom) => {
     try {
-      setLoading(true);
+      // setLoading(true)
 
       const mushroom = {
         scientificName,
@@ -44,47 +37,47 @@ const AddMushroom = () => {
         photoUrl,
         user_id: session?.user.id,
         user_email: session?.user.email,
-      };
-      const { error } = await supabase.from("mushroom").insert(mushroom);
-      if (error) throw error;
-      alert("Mushroom added!");
-    } catch (error) {
-      alert("Error creating record...");
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const uploadPhoto = async (e) => {
-    try {
-      setPhotoUploading(true);
-      if (!e.target.files || e.target.files.length === 0) {
-        throw new Error("You must select an image to upload.");
       }
-      const file = e.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${session?.user.id}.${fileExt}`;
-      const filePath = `${fileName}`;
-      setPhotoUrl(filePath);
+      const { error } = await supabase.from('mushroom').insert(mushroom)
+      if (error) throw error
+      alert('Mushroom added!')
+    } catch (error) {
+      alert('Error creating record...')
+      console.log(error)
+    } finally {
+      // setLoading(false)
+    }
+  }
+
+  const uploadPhoto = async (e: Event | ChangeEvent) => {
+    try {
+      // setPhotoUploading(true)
+      if (!(e.target as HTMLInputElement)?.files || (e.target as HTMLInputElement)?.files?.length === 0) {
+        throw new Error('You must select an image to upload.')
+      }
+      const file = (e.target as HTMLInputElement).files![0]
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${session?.user.id}.${fileExt}`
+      const filePath = `${fileName}`
+      setPhotoUrl(filePath)
 
       const { error: uploadError } = await supabase.storage
-        .from("mushroom-photos")
-        .upload(filePath, file, { upsert: true });
+        .from('mushroom-photos')
+        .upload(filePath, file, { upsert: true })
 
       if (uploadError) {
-        throw uploadError;
+        throw uploadError
       }
     } catch (error) {
-      alert("Error uploading photo...");
-      console.log(error);
+      alert('Error uploading photo...')
+      console.log(error)
     } finally {
-      setPhotoUploading(false);
+      // setPhotoUploading(false)
     }
-  };
+  }
 
   return (
-    <div className="container">
+    <div>
       {!session ? (
         <Auth
           supabaseClient={supabase}
@@ -100,7 +93,7 @@ const AddMushroom = () => {
               name="scientificName"
               id="scientificName"
               onChange={(e) => {
-                setScienctificName(e.target.value);
+                setScienctificName(e.target.value)
               }}
             />
             <label htmlFor="commonName">Common Name</label>
@@ -109,7 +102,7 @@ const AddMushroom = () => {
               name="commonName"
               id="commonName"
               onChange={(e) => {
-                setCommonName(e.target.value);
+                setCommonName(e.target.value)
               }}
             />
             <label htmlFor="pictures">Upload Pictures</label>
@@ -125,7 +118,7 @@ const AddMushroom = () => {
               id="comment"
               rows={4}
               onChange={(e) => {
-                setDescription(e.target.value);
+                setDescription(e.target.value)
               }}
             />
             <label htmlFor="sporePrint">Spore Print (Color)</label>
@@ -134,25 +127,25 @@ const AddMushroom = () => {
               name="sporePrint"
               id="sporePrint"
               onChange={(e) => {
-                setSporePrint(e.target.value);
+                setSporePrint(e.target.value)
               }}
             />
             <label>Edibility</label>
             <fieldset
               id="edibility"
               onChange={(e) => {
-                setEdibility(e.target.value);
+                setEdibility((e.target as HTMLInputElement).value)
               }}
             >
               <label>
                 <input type="radio" value="Edible" name="edibility" /> Edible
               </label>
               <label>
-                <input type="radio" value="Inedible" name="edibility" />{" "}
+                <input type="radio" value="Inedible" name="edibility" />{' '}
                 Inedible
               </label>
               <label>
-                <input type="radio" value="Poisonous" name="edibility" />{" "}
+                <input type="radio" value="Poisonous" name="edibility" />{' '}
                 Poisonous
               </label>
               <label>
@@ -169,7 +162,7 @@ const AddMushroom = () => {
             <button
               type="submit"
               onClick={(e) => {
-                e.preventDefault();
+                e.preventDefault()
                 addMushroom({
                   scientificName,
                   commonName,
@@ -177,7 +170,8 @@ const AddMushroom = () => {
                   sporePrint,
                   edibility,
                   edibilityNotes,
-                });
+                  photoUrl,
+                })
               }}
             >
               Submit
@@ -188,7 +182,7 @@ const AddMushroom = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AddMushroom;
+export default AddMushroom

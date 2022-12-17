@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 interface Mushroom {
@@ -10,8 +11,9 @@ interface Mushroom {
   photoUrl: string;
 }
 
-const MushroomPage = (props: []) => {
-  const mushroom = props.mushroom[0];
+const MushroomPage = (props: Mushroom[]) => {
+  console.log(props)
+  const mushroom = props[0];
   const {
     scientificName,
     commonName,
@@ -27,6 +29,7 @@ const MushroomPage = (props: []) => {
       <label htmlFor="scientificName">Scientific Name</label>
       <span>{scientificName}</span>
       <label htmlFor="commonName">Common Name</label>
+      <span>{commonName}</span>
       <label htmlFor="pictures">Upload Pictures</label>
       <label htmlFor="description">Description</label>
       <label htmlFor="sporePrint">Spore Print (Color)</label>
@@ -41,8 +44,8 @@ export default MushroomPage;
 export const getStaticPaths = async () => {
   const supabaseClient = createBrowserSupabaseClient();
   const { data: mushrooms } = await supabaseClient.from("mushroom").select("*");
-  console.log(mushrooms);
-  const paths = mushrooms.map(({ id }) => ({
+  console.log(mushrooms)
+  const paths = mushrooms?.map(({ id }) => ({
     params: {
       id: id.toString(),
     },
@@ -54,6 +57,8 @@ export const getStaticPaths = async () => {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const getStaticProps = async ({ params: { id } }) => {
   const supabaseClient = createBrowserSupabaseClient();
   const { data: mushroom } = await supabaseClient

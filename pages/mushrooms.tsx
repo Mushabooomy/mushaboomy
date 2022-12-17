@@ -3,8 +3,8 @@ import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-interface Mushroom {
-  id: number;
+export interface Mushroom {
+  id?: number;
   scientificName: string;
   commonName: string;
   description: string;
