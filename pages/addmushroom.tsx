@@ -5,7 +5,6 @@ import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 const AddMushroom = () => {
   const session = useSession();
   const supabase = useSupabaseClient();
-
   const [loading, setLoading] = useState(true);
   const [scientificName, setScienctificName] = useState("");
   const [commonName, setCommonName] = useState("");
@@ -85,7 +84,7 @@ const AddMushroom = () => {
   };
 
   return (
-    <div className="container" style={{ padding: "50px 0 100px 0" }}>
+    <div className="container">
       {!session ? (
         <Auth
           supabaseClient={supabase}

@@ -1,17 +1,19 @@
 import Link from "next/link";
 
-const Nav = () => {
-  console.log("nav");
-
-  return (
-    <header>
-      <nav>
-        <Link href="/">MUSH-A-BOOM!</Link>
-        <Link href="/addmushroom/">+ 🍄</Link>
-        <Link href="/mushrooms/">Mushrooms</Link>
-      </nav>
-    </header>
-  );
-};
+const Nav = () => (
+  <header>
+    <nav>
+      <Link href="/">
+        <h1>MUSH-A-BOOM!</h1>
+      </Link>
+      <Link href="/addmushroom/">
+        <button className="add">+ 🍄</button>
+      </Link>
+      <Link href="/mushrooms/">
+        <button className="mushrooms">Mushrooms</button>
+      </Link>
+    </nav>
+  </header>
+);
 
 export default Nav;
