@@ -2,7 +2,7 @@ import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { Mushroom } from './addmushroom';
-import MushroomView from '../src/components/Mushroom';
+import MushroomView from '../src/components/MushroomView';
 
 const Mushrooms = () => {
   const session = useSession();
