@@ -1,33 +1,36 @@
-import { ChangeEvent, useState } from 'react'
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Mushroom } from './mushrooms';
+import { useState, useRef } from "react";
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+
+interface Mushroom {
+  scientificName: string;
+  commonName: string;
+  description: string;
+  sporePrint: string;
+  edibility: string;
+  edibilityNotes: string;
+  photoUrl: string;
+}
 
 const AddMushroom = () => {
-  const session = useSession()
-  const supabase = useSupabaseClient()
-  // const [loading, setLoading] = useState(true)
-  const [scientificName, setScienctificName] = useState('')
-  const [commonName, setCommonName] = useState('')
-  const [description, setDescription] = useState('')
-  const [sporePrint, setSporePrint] = useState('')
-  const [edibility, setEdibility] = useState('')
-  const [edibilityNotes, setEdibilityNotes] = useState('')
-  // const [photoUploading, setPhotoUploading] = useState(false)
-  const [photoUrl, setPhotoUrl] = useState('')
+  const session = useSession();
+  const supabase = useSupabaseClient();
+  const [loading, setLoading] = useState(true);
+  const [scientificName, setScienctificName] = useState("");
+  const [commonName, setCommonName] = useState("");
+  const [description, setDescription] = useState("");
+  const [sporePrint, setSporePrint] = useState("");
+  const [edibility, setEdibility] = useState("");
+  const [edibilityNotes, setEdibilityNotes] = useState("");
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoFile, setPhotoFile] = useState({});
+  const ref = useRef();
 
-  const addMushroom = async ({
-    scientificName,
-    commonName,
-    description,
-    sporePrint,
-    edibility,
-    edibilityNotes,
-  }: Mushroom) => {
+  const addMushroom = async () => {
     try {
-      // setLoading(true)
-
-      const mushroom = {
+      setLoading(true);
+      const mushroom: Mushroom = {
         scientificName,
         commonName,
         description,
@@ -37,10 +40,14 @@ const AddMushroom = () => {
         photoUrl,
         user_id: session?.user.id,
         user_email: session?.user.email,
+      };
+      const { error } = await supabase.from("mushroom").insert(mushroom);
+      if (error) {
+        throw error;
+      } else {
+        alert("Mushroom record created!");
+        clearForm();
       }
-      const { error } = await supabase.from('mushroom').insert(mushroom)
-      if (error) throw error
-      alert('Mushroom added!')
     } catch (error) {
       alert('Error creating record...')
       console.log(error)
@@ -49,32 +56,50 @@ const AddMushroom = () => {
     }
   }
 
-  const uploadPhoto = async (e: Event | ChangeEvent) => {
+  const uploadPhoto = async () => {
+    setPhotoUploading(true);
     try {
-      // setPhotoUploading(true)
-      if (!(e.target as HTMLInputElement)?.files || (e.target as HTMLInputElement)?.files?.length === 0) {
-        throw new Error('You must select an image to upload.')
-      }
-      const file = (e.target as HTMLInputElement).files![0]
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${session?.user.id}.${fileExt}`
-      const filePath = `${fileName}`
-      setPhotoUrl(filePath)
+      const newFileName = `${session?.user.id}-${photoFile.name}`;
+      const filePath = `${newFileName}`;
+      setPhotoUrl(filePath);
 
       const { error: uploadError } = await supabase.storage
-        .from('mushroom-photos')
-        .upload(filePath, file, { upsert: true })
+        .from("mushroom-photos")
+        .upload(filePath, photoFile, { cacheControl: "3600", upsert: false });
 
       if (uploadError) {
-        throw uploadError
+        throw uploadError;
+      } else {
+        setPhotoUploading(false);
+        addMushroom();
+        setPhotoUploading(false);
       }
     } catch (error) {
-      alert('Error uploading photo...')
-      console.log(error)
+      alert("Error uploading photo.  Mushroom record not created");
+      console.log(error);
     } finally {
       // setPhotoUploading(false)
     }
   }
+
+  const clearForm = () => {
+    setScienctificName("");
+    setCommonName("");
+    setDescription("");
+    setSporePrint("");
+    setEdibility("");
+    setEdibilityNotes("");
+    setPhotoUrl("");
+    ref.current.value = "";
+  };
+
+  const handlePhotoChange = async (e) => {
+    setPhotoUploading(true);
+    if (!e.target.files || e.target.files.length === 0) {
+      throw new Error("You must select an image to upload.");
+    }
+    setPhotoFile(e.target.files[0]);
+  };
 
   return (
     <div>
@@ -92,6 +117,7 @@ const AddMushroom = () => {
               type="text"
               name="scientificName"
               id="scientificName"
+              value={scientificName}
               onChange={(e) => {
                 setScienctificName(e.target.value)
               }}
@@ -101,6 +127,7 @@ const AddMushroom = () => {
               type="text"
               name="commonName"
               id="commonName"
+              value={commonName}
               onChange={(e) => {
                 setCommonName(e.target.value)
               }}
@@ -110,12 +137,14 @@ const AddMushroom = () => {
               name="pictures"
               id="pictures"
               type="file"
-              onChange={(e) => uploadPhoto(e)}
+              ref={ref}
+              onChange={(e) => handlePhotoChange(e)}
             />
             <label htmlFor="description">Description</label>
             <textarea
               name="description"
               id="comment"
+              value={description}
               rows={4}
               onChange={(e) => {
                 setDescription(e.target.value)
@@ -126,6 +155,7 @@ const AddMushroom = () => {
               type="text"
               name="sporePrint"
               id="sporePrint"
+              value={sporePrint}
               onChange={(e) => {
                 setSporePrint(e.target.value)
               }}
@@ -133,6 +163,7 @@ const AddMushroom = () => {
             <label>Edibility</label>
             <fieldset
               id="edibility"
+              value={edibility}
               onChange={(e) => {
                 setEdibility((e.target as HTMLInputElement).value)
               }}
@@ -157,21 +188,14 @@ const AddMushroom = () => {
               name="edibilityNotes"
               id="edibilityNotes"
               rows={2}
+              value={edibilityNotes}
               onChange={(e) => setEdibilityNotes(e.target.value)}
             />
             <button
               type="submit"
-              onClick={(e) => {
-                e.preventDefault()
-                addMushroom({
-                  scientificName,
-                  commonName,
-                  description,
-                  sporePrint,
-                  edibility,
-                  edibilityNotes,
-                  photoUrl,
-                })
+              onClick={async (e) => {
+                e.preventDefault();
+                await uploadPhoto();
               }}
             >
               Submit
