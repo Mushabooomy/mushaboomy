@@ -30,7 +30,6 @@ const AddMushroom = () => {
   const addMushroom = async () => {
     try {
       setLoading(true);
-
       const mushroom: Mushroom = {
         scientificName,
         commonName,
@@ -47,14 +46,7 @@ const AddMushroom = () => {
         throw error;
       } else {
         alert("Mushroom record created!");
-        setScienctificName("");
-        setCommonName("");
-        setDescription("");
-        setSporePrint("");
-        setEdibility("");
-        setEdibilityNotes("");
-        setPhotoUrl("");
-        ref.current.value = "";
+        clearForm();
       }
     } catch (error) {
       alert("Error creating record...");
@@ -88,6 +80,17 @@ const AddMushroom = () => {
     } finally {
       setPhotoUploading(false);
     }
+  };
+
+  const clearForm = () => {
+    setScienctificName("");
+    setCommonName("");
+    setDescription("");
+    setSporePrint("");
+    setEdibility("");
+    setEdibilityNotes("");
+    setPhotoUrl("");
+    ref.current.value = "";
   };
 
   const handlePhotoChange = async (e) => {
