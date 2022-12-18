@@ -43,14 +43,23 @@ const AddMushroom = () => {
         user_email: session?.user.email,
       };
       const { error } = await supabase.from("mushroom").insert(mushroom);
-      if (error) throw error;
-      alert("Mushroom added!");
+      if (error) {
+        throw error;
+      } else {
+        alert("Mushroom record created!");
+        setScienctificName("");
+        setCommonName("");
+        setDescription("");
+        setSporePrint("");
+        setEdibility("");
+        setEdibilityNotes("");
+        setPhotoUrl("");
+        ref.current.value = "";
+      }
     } catch (error) {
       alert("Error creating record...");
       console.log(error);
     } finally {
-      setPhotoUrl("");
-      ref.current.value = "";
       setLoading(false);
     }
   };
@@ -68,9 +77,13 @@ const AddMushroom = () => {
 
       if (uploadError) {
         throw uploadError;
+      } else {
+        setPhotoUploading(false);
+        addMushroom();
+        setPhotoUploading(false);
       }
     } catch (error) {
-      alert("Error uploading photo...");
+      alert("Error uploading photo.  Mushroom record not created");
       console.log(error);
     } finally {
       setPhotoUploading(false);
@@ -101,6 +114,7 @@ const AddMushroom = () => {
               type="text"
               name="scientificName"
               id="scientificName"
+              value={scientificName}
               onChange={(e) => {
                 setScienctificName(e.target.value);
               }}
@@ -110,6 +124,7 @@ const AddMushroom = () => {
               type="text"
               name="commonName"
               id="commonName"
+              value={commonName}
               onChange={(e) => {
                 setCommonName(e.target.value);
               }}
@@ -126,6 +141,7 @@ const AddMushroom = () => {
             <textarea
               name="description"
               id="comment"
+              value={description}
               rows={4}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -136,6 +152,7 @@ const AddMushroom = () => {
               type="text"
               name="sporePrint"
               id="sporePrint"
+              value={sporePrint}
               onChange={(e) => {
                 setSporePrint(e.target.value);
               }}
@@ -143,6 +160,7 @@ const AddMushroom = () => {
             <label>Edibility</label>
             <fieldset
               id="edibility"
+              value={edibility}
               onChange={(e) => {
                 setEdibility(e.target.value);
               }}
@@ -167,6 +185,7 @@ const AddMushroom = () => {
               name="edibilityNotes"
               id="edibilityNotes"
               rows={2}
+              value={edibilityNotes}
               onChange={(e) => setEdibilityNotes(e.target.value)}
             />
             <button
@@ -174,7 +193,6 @@ const AddMushroom = () => {
               onClick={async (e) => {
                 e.preventDefault();
                 await uploadPhoto();
-                await addMushroom();
               }}
             >
               Submit
