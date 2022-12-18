@@ -1,6 +1,6 @@
 const Home = () => {
   return (
-    <main>
+    <div>
       <p>
         MUSH-A-BOOM! is a mushroom cataloging web application that is a useful
         tool for anyone interested in mushrooms. It allows users to create a
@@ -14,7 +14,7 @@ const Home = () => {
         mushrooms in the catalog, users can keep track of their findings and
         continue to learn more about these fascinating organisms.
       </p>
-    </main>
+    </div>
   );
 };
 

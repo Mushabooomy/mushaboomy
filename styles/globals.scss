@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap');
 
 * {
   box-sizing: border-box;
@@ -8,17 +8,25 @@ html,
 body {
   padding: 1rem;
   margin: 0;
-  background-image: url("../src/k8-yQLlLCIoEWc-unsplash.jpeg");
+  background-image: url('../src/k8-yQLlLCIoEWc-unsplash.jpeg');
   background-position: center;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.container {
+.wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+
+  > div {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 1rem;
+    border-radius: 1rem;
+    margin: 0;
+    width: 400px;
+  }
 }
 
 nav {
@@ -35,7 +43,7 @@ nav {
 
 nav h1 {
   font-size: 2.5rem;
-  font-family: "Rubik Puddles", cursive;
+  font-family: 'Rubik Puddles', cursive;
   color: white;
 }
 
@@ -55,14 +63,14 @@ button {
   }
 }
 
-main p,
-form {
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 1rem;
-  border-radius: 1rem;
-  margin: 0;
-  width: 400px;
-}
+// main p,
+// form {
+//   background-color: rgba(255, 255, 255, 0.85);
+//   padding: 1rem;
+//   border-radius: 1rem;
+//   margin: 0;
+//   width: 400px;
+// }
 
 .flex {
   display: flex;
@@ -74,7 +82,7 @@ form {
 }
 
 @media (min-width: 800px) {
-  .container {
+  .wrapper {
     align-items: flex-start;
   }
 }

@@ -1,18 +1,8 @@
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-
-interface Mushroom {
-  id: number;
-  scientificName: string;
-  commonName: string;
-  description: string;
-  sporePrint: string;
-  edibility: string;
-  edibilityNotes: string;
-  photoUrl: string;
-}
+import { Mushroom } from './addmushroom';
+import MushroomView from '../src/components/Mushroom';
 
 const Mushrooms = () => {
   const session = useSession();
@@ -43,9 +33,7 @@ const Mushrooms = () => {
         <ul>
           {mushrooms.map((mushroom) => (
             <li key={mushroom.id}>
-              <Link key={mushroom.id} href={`/${mushroom.id}`}>
-                {mushroom.id}
-              </Link>
+              <MushroomView {...mushroom}/>
             </li>
           ))}
         </ul>
