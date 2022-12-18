@@ -18,7 +18,7 @@ export default function App({
       supabaseClient={supabase}
       initialSession={pageProps.initialSession}
     >
-      <div className="container">
+      <div className="wrapper">
         <Head>
         <title>MUSH-A-BOOM!</title>
         <meta name="description" content="Mushroom cataloging application" />
