@@ -1,6 +1,16 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+
+interface Mushroom {
+  scientificName: string;
+  commonName: string;
+  description: string;
+  sporePrint: string;
+  edibility: string;
+  edibilityNotes: string;
+  photoUrl: string;
+}
 
 const AddMushroom = () => {
   const session = useSession();
@@ -14,27 +24,14 @@ const AddMushroom = () => {
   const [edibilityNotes, setEdibilityNotes] = useState("");
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
+  const [photoFile, setPhotoFile] = useState({});
+  const ref = useRef();
 
-  const addMushroom = async ({
-    scientificName,
-    commonName,
-    description,
-    sporePrint,
-    edibility,
-    edibilityNotes,
-  }: {
-    scientificName: string;
-    commonName: string;
-    description: string;
-    sporePrint: string;
-    edibility: string;
-    edibilityNotes: string;
-    photoUrl: string;
-  }) => {
+  const addMushroom = async () => {
     try {
       setLoading(true);
 
-      const mushroom = {
+      const mushroom: Mushroom = {
         scientificName,
         commonName,
         description,
@@ -52,25 +49,21 @@ const AddMushroom = () => {
       alert("Error creating record...");
       console.log(error);
     } finally {
+      ref.current.value = "";
       setLoading(false);
     }
   };
 
-  const uploadPhoto = async (e) => {
+  const uploadPhoto = async () => {
+    setPhotoUploading(true);
     try {
-      setPhotoUploading(true);
-      if (!e.target.files || e.target.files.length === 0) {
-        throw new Error("You must select an image to upload.");
-      }
-      const file = e.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${session?.user.id}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const newFileName = `${session?.user.id}-${photoFile.name}`;
+      const filePath = `${newFileName}`;
       setPhotoUrl(filePath);
 
       const { error: uploadError } = await supabase.storage
         .from("mushroom-photos")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, photoFile, { cacheControl: "3600", upsert: false });
 
       if (uploadError) {
         throw uploadError;
@@ -81,6 +74,14 @@ const AddMushroom = () => {
     } finally {
       setPhotoUploading(false);
     }
+  };
+
+  const handlePhotoChange = async (e) => {
+    setPhotoUploading(true);
+    if (!e.target.files || e.target.files.length === 0) {
+      throw new Error("You must select an image to upload.");
+    }
+    setPhotoFile(e.target.files[0]);
   };
 
   return (
@@ -117,7 +118,8 @@ const AddMushroom = () => {
               name="pictures"
               id="pictures"
               type="file"
-              onChange={(e) => uploadPhoto(e)}
+              ref={ref}
+              onChange={(e) => handlePhotoChange(e)}
             />
             <label htmlFor="description">Description</label>
             <textarea
@@ -168,16 +170,10 @@ const AddMushroom = () => {
             />
             <button
               type="submit"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
-                addMushroom({
-                  scientificName,
-                  commonName,
-                  description,
-                  sporePrint,
-                  edibility,
-                  edibilityNotes,
-                });
+                await uploadPhoto();
+                await addMushroom();
               }}
             >
               Submit
