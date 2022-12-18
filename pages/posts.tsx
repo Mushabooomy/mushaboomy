@@ -21,7 +21,7 @@ const AddMushroom = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  });
 
   const getData = async () => {
     console.log("get");

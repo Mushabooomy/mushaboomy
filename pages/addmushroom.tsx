@@ -1,8 +1,10 @@
-import { useState, useRef } from "react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useState, useRef, ChangeEvent } from "react";
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 
-interface Mushroom {
+export interface Mushroom {
+  id?: number;
   scientificName: string;
   commonName: string;
   description: string;
@@ -10,6 +12,8 @@ interface Mushroom {
   edibility: string;
   edibilityNotes: string;
   photoUrl: string;
+  user_id?: string,
+  user_email?: string
 }
 
 const AddMushroom = () => {
@@ -24,8 +28,8 @@ const AddMushroom = () => {
   const [edibilityNotes, setEdibilityNotes] = useState("");
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
-  const [photoFile, setPhotoFile] = useState({});
-  const ref = useRef();
+  const [photoFile, setPhotoFile] = useState<File | undefined>();
+  const ref = useRef<HTMLInputElement | null>();
 
   const addMushroom = async () => {
     try {
@@ -52,20 +56,20 @@ const AddMushroom = () => {
       alert('Error creating record...')
       console.log(error)
     } finally {
-      // setLoading(false)
+      setLoading(false)
     }
   }
 
   const uploadPhoto = async () => {
     setPhotoUploading(true);
     try {
-      const newFileName = `${session?.user.id}-${photoFile.name}`;
+      const newFileName = `${session?.user.id}-${photoFile?.name}`;
       const filePath = `${newFileName}`;
       setPhotoUrl(filePath);
-
+      debugger;
       const { error: uploadError } = await supabase.storage
         .from("mushroom-photos")
-        .upload(filePath, photoFile, { cacheControl: "3600", upsert: false });
+        .upload(filePath, photoFile!, { cacheControl: "3600", upsert: false });
 
       if (uploadError) {
         throw uploadError;
@@ -78,7 +82,7 @@ const AddMushroom = () => {
       alert("Error uploading photo.  Mushroom record not created");
       console.log(error);
     } finally {
-      // setPhotoUploading(false)
+      setPhotoUploading(false)
     }
   }
 
@@ -90,17 +94,19 @@ const AddMushroom = () => {
     setEdibility("");
     setEdibilityNotes("");
     setPhotoUrl("");
-    ref.current.value = "";
+    ref.current!.value = "";
   };
 
-  const handlePhotoChange = async (e) => {
+  const handlePhotoChange = async (e: ChangeEvent) => {
+    console.log(photoUploading)
     setPhotoUploading(true);
-    if (!e.target.files || e.target.files.length === 0) {
+    if (!(e.target as HTMLInputElement).files || (e.target as HTMLInputElement).files?.length === 0) {
       throw new Error("You must select an image to upload.");
     }
-    setPhotoFile(e.target.files[0]);
+    setPhotoFile((e.target as HTMLInputElement).files![0]);
   };
 
+  console.log(loading)
   return (
     <div>
       {!session ? (
@@ -137,6 +143,7 @@ const AddMushroom = () => {
               name="pictures"
               id="pictures"
               type="file"
+              // @ts-ignore
               ref={ref}
               onChange={(e) => handlePhotoChange(e)}
             />
@@ -163,6 +170,7 @@ const AddMushroom = () => {
             <label>Edibility</label>
             <fieldset
               id="edibility"
+              // @ts-ignore
               value={edibility}
               onChange={(e) => {
                 setEdibility((e.target as HTMLInputElement).value)
