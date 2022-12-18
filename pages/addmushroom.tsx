@@ -49,6 +49,7 @@ const AddMushroom = () => {
       alert("Error creating record...");
       console.log(error);
     } finally {
+      setPhotoUrl("");
       ref.current.value = "";
       setLoading(false);
     }
