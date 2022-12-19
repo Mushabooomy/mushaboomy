@@ -20,7 +20,7 @@ export default function App({
     >
       <div className="wrapper">
         <Head>
-        <title>MUSH-A-BOOM!</title>
+        <title>MUSHROOM BOOM!</title>
         <meta name="description" content="Mushroom cataloging application" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta
