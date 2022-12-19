@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Mushroom } from '../../pages/addmushroom'
 
@@ -9,35 +9,32 @@ type Props = {
 }
 
 const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
-  const [expanded, setExpanded] = useState(false)
+  const ref = useRef<HTMLDetailsElement | null>(null)
+
+  useEffect(() => {
+    console.log('init', activeMushroom)
+  }, [])
 
   function toggleExpanded() {
-    console.log(activeMushroom)
-    mushroom.id === activeMushroom
-      ? expandChange(undefined)
-      : expandChange(mushroom.id)
-    setExpanded(!expanded)
+    if (ref.current!.open) {
+      expandChange(undefined)
+    } else {
+      expandChange(mushroom.id)
+    }
   }
 
-  return !expanded ? (
-    <li
-      key={mushroom.id}
-      onClick={toggleExpanded}
-    >
-      <Image src="" alt={mushroom.scientificName} />
-      <h2>{mushroom.scientificName}</h2>
-      <h3>{mushroom.commonName}</h3>
-    </li>
-  ) : (
-    <div className="expanded">
-      <Image src="" alt={mushroom.scientificName} />
-      <h2 onClick={toggleExpanded}>BIG VIEW{mushroom.scientificName}</h2>
-      <h3>{mushroom.commonName}</h3>
-      <p className="description">{mushroom.description}</p>
-      <p className="edibility">{mushroom.edibility}</p>
-      <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
-      <p className="sportPrint">{mushroom.sporePrint}</p>
-    </div>
+  return (
+    <details ref={ref}>
+      <summary onClick={toggleExpanded}>{mushroom.scientificName}</summary>
+      <div className="content">
+        <Image src="" alt={mushroom.scientificName} />
+        <h3>{`${mushroom.id} - ${mushroom.commonName}`}</h3>
+        <p className="description">{mushroom.description}</p>
+        <p className="edibility">{mushroom.edibility}</p>
+        <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
+        <p className="sportPrint">{mushroom.sporePrint}</p>
+      </div>
+    </details>
   )
 }
 

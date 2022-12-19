@@ -16,16 +16,30 @@ const Mushrooms = () => {
     getData()
   }, [])
 
+  useEffect(() => {
+    console.log('reload')
+  }, [activeMushroom])
+
   const getData = async () => {
     const { data, error } = await supabase.from('mushroom').select('*')
     if (data) {
       await setMushrooms(data)
     }
-    console.log(error)
+    if (error) {
+      console.log(error)
+    }
   }
 
   function changeFocus(id: number | undefined) {
     setActiveMushroom(id)
+  }
+
+  function getActiveMushroom() {
+    if (activeMushroom) {
+      return mushrooms.filter((mush) => {
+        return mush.id === activeMushroom
+      })
+    } else return mushrooms
   }
 
   return (
@@ -37,8 +51,8 @@ const Mushrooms = () => {
           theme="default"
         />
       ) : (
-        <ul className="mushroomsList">
-          {mushrooms.map((mushroom) => (
+        <div className="mushroomsList">
+          {getActiveMushroom().map((mushroom) => (
             <MushroomView
               mushroom={mushroom}
               {...mushroom}
@@ -47,7 +61,7 @@ const Mushrooms = () => {
               activeMushroom={activeMushroom}
             />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   )
