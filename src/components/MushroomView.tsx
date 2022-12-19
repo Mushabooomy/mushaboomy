@@ -1,24 +1,43 @@
-import React from 'react'
-import { Mushroom } from '../../pages/addmushroom';
+import React, { useState } from 'react'
+import Image from 'next/image'
+import { Mushroom } from '../../pages/addmushroom'
 
-const MushroomView = (props: { Mushroom: Mushroom }) => {
-  console.log(props)
+type Props = {
+  mushroom: Mushroom
+  expandChange: (id: number | undefined) => void
+  activeMushroom: number | undefined
+}
 
-  // for (const item in props) {
-  //   console.log(item)
-  // }
+const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
+  const [expanded, setExpanded] = useState(false)
 
-  // const thing = Object.keys(props).forEach(function(key, index) {
-  //   props[key] *= 2;
-  // });
+  function toggleExpanded() {
+    console.log(activeMushroom)
+    mushroom.id === activeMushroom
+      ? expandChange(undefined)
+      : expandChange(mushroom.id)
+    setExpanded(!expanded)
+  }
 
-  // console.log(thing)
-  return (
-    <>
-      <h1>MUSHROOM</h1>
-      <ul>
-      </ul>
-    </>
+  return !expanded ? (
+    <li
+      key={mushroom.id}
+      onClick={toggleExpanded}
+    >
+      <Image src="" alt={mushroom.scientificName} />
+      <h2>{mushroom.scientificName}</h2>
+      <h3>{mushroom.commonName}</h3>
+    </li>
+  ) : (
+    <div className="expanded">
+      <Image src="" alt={mushroom.scientificName} />
+      <h2 onClick={toggleExpanded}>BIG VIEW{mushroom.scientificName}</h2>
+      <h3>{mushroom.commonName}</h3>
+      <p className="description">{mushroom.description}</p>
+      <p className="edibility">{mushroom.edibility}</p>
+      <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
+      <p className="sportPrint">{mushroom.sporePrint}</p>
+    </div>
   )
 }
 
