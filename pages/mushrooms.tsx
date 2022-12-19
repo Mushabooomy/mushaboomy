@@ -48,7 +48,7 @@ const Mushrooms = () => {
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
-          theme="default"
+          theme='default'
         />
       ) : (
         <div className="mushroomsList">

@@ -38,4 +38,4 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
   )
 }
 
-export default MushroomView
+export default MushroomView;
