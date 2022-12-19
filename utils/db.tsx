@@ -12,9 +12,21 @@ export async function handleCreate(supabase: object, mushroom: object) {
   }
 }
 
-//Handle readOne
+export async function handleGetAll(supabase: object, setMushrooms) {
+  try {
+    const { data, error } = await supabase.from('mushroom').select('*');
+    if (error) {
+      throw error;
+    } else {
+      setMushrooms(data);
+    }
+  } catch (error) {
+    alert('Error loading mushrooms;');
+    console.log(error);
+  }
+}
 
-//Handle readAll
+//Handle readOne
 
 //Handle updateOne
 
