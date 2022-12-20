@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import Image from 'next/image'
 import { Mushroom } from '../../pages/addmushroom'
+import styles from '../../styles/MushroomView.module.scss'
 
 type Props = {
   mushroom: Mushroom
@@ -24,11 +24,18 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
   }
 
   return (
-    <details ref={ref}>
-      <summary onClick={toggleExpanded}>{mushroom.scientificName}</summary>
-      <div className="content">
-        <Image src="" alt={mushroom.scientificName} />
-        <h3>{`${mushroom.id} - ${mushroom.commonName}`}</h3>
+    <details ref={ref} className={styles.details}>
+      <summary onClick={toggleExpanded}>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Amanita_muscaria_%28fly_agaric%29.JPG/1024px-Amanita_muscaria_%28fly_agaric%29.JPG"
+          alt={mushroom.scientificName}
+        />
+        <div className="titles">
+          <h3>{mushroom.scientificName}</h3>
+          <h4>{mushroom.commonName}</h4>
+        </div>
+      </summary>
+      <div className={styles.content}>
         <p className="description">{mushroom.description}</p>
         <p className="edibility">{mushroom.edibility}</p>
         <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
@@ -38,4 +45,4 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
   )
 }
 
-export default MushroomView;
+export default MushroomView

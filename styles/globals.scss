@@ -10,6 +10,8 @@ body {
   margin: 0;
   background-image: url('../src/k8-yQLlLCIoEWc-unsplash.jpeg');
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -42,12 +44,11 @@ nav {
 
   div {
     display: flex;
-    gap: 2rem;  
-
+    gap: 2rem;
   }
 
   &:not(.expanded) {
-    padding: .5rem;
+    padding: 0.5rem;
     margin: 0 0 1rem 0;
 
     h1 {
@@ -60,8 +61,8 @@ nav {
       cursor: pointer;
       font-size: 1rem;
       border-radius: 1.25rem;
-      padding: 0.15rem .5rem;
-    
+      padding: 0.15rem 0.5rem;
+
       &.add {
         border: 1px solid orange;
       }
