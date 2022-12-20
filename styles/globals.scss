@@ -1,7 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@100;200;400;600;700;800;900&family=Rubik+Puddles&display=swap');
 
 * {
   box-sizing: border-box;
+}
+
+:root {
+  --font-brand: 'Rubik Puddles', cursive;
+  --font-headlines: 'Barlow', sans-serif;
+  --font-paragraphs: 'Barlow', sans-serif;
+  --font-buttons: 'Barlow', sans-serif;
+
+  --font-size: 1rem;
+  --font-size-s: .75rem;
+  --font-size-l: 1.5rem;
+  --font-size-xl: 2rem;
 }
 
 html,
@@ -10,6 +22,8 @@ body {
   margin: 0;
   background-image: url('../src/k8-yQLlLCIoEWc-unsplash.jpeg');
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -25,7 +39,7 @@ body {
     padding: 1rem;
     border-radius: 1rem;
     margin: 0;
-    width: 400px;
+    width: 480px;
   }
 }
 
@@ -34,16 +48,43 @@ nav {
   border-radius: 2rem;
   padding: 1rem;
   margin: 0 0 2rem 0;
-  width: 400px;
+  width: 480px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
+  div {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &:not(.expanded) {
+    padding: 0.5rem;
+    margin: 0 0 1rem 0;
+
+    h1 {
+      font-size: 1.5rem;
+      font-family: 'Rubik Puddles', cursive;
+      color: white;
+    }
+
+    button {
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 1.25rem;
+      padding: 0.15rem 0.5rem;
+
+      &.add {
+        border: 1px solid orange;
+      }
+    }
+  }
 }
 
 nav h1 {
   font-size: 2.5rem;
-  font-family: 'Rubik Puddles', cursive;
+  font-family: var(--font-brand);
   color: white;
 }
 
@@ -57,20 +98,11 @@ button {
   font-size: 2rem;
   border-radius: 1.25rem;
   padding: 0.5rem 1rem;
-
-  &.add {
-    border: 1px solid orange;
-  }
 }
 
-// main p,
-// form {
-//   background-color: rgba(255, 255, 255, 0.85);
-//   padding: 1rem;
-//   border-radius: 1rem;
-//   margin: 0;
-//   width: 400px;
-// }
+ul.mushroomsList {
+  list-style: none;
+}
 
 .flex {
   display: flex;

@@ -1,18 +1,46 @@
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
-import { useEffect, useState } from 'react';
-import { Mushroom } from './addmushroom';
-import MushroomView from '../src/components/MushroomView';
-import { handleGetAll } from '../utils/db';
+import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useEffect, useState } from 'react'
+import { Mushroom } from './addmushroom'
+import MushroomView from '../src/components/MushroomView'
 
 const Mushrooms = () => {
-  const session = useSession();
-  const supabase = useSupabaseClient();
-  const [mushrooms, setMushrooms] = useState<Mushroom[]>([]);
+  const session = useSession()
+  const supabase = useSupabaseClient()
+  const [mushrooms, setMushrooms] = useState<Mushroom[]>([])
+  const [activeMushroom, setActiveMushroom] = useState<number | undefined>(
+    undefined,
+  )
 
   useEffect(() => {
-    handleGetAll(supabase, setMushrooms);
-  }, []);
+    getData()
+  }, [])
+
+  useEffect(() => {
+    console.log('reload')
+  }, [activeMushroom])
+
+  const getData = async () => {
+    const { data, error } = await supabase.from('mushroom').select('*')
+    if (data) {
+      await setMushrooms(data)
+    }
+    if (error) {
+      console.log(error)
+    }
+  }
+
+  function changeFocus(id: number | undefined) {
+    setActiveMushroom(id)
+  }
+
+  function getActiveMushroom() {
+    if (activeMushroom) {
+      return mushrooms.filter((mush) => {
+        return mush.id === activeMushroom
+      })
+    } else return mushrooms
+  }
 
   return (
     <div>
@@ -23,16 +51,20 @@ const Mushrooms = () => {
           theme='default'
         />
       ) : (
-        <ul>
-          {mushrooms.map((mushroom) => (
-            <li key={mushroom.id}>
-              <MushroomView {...mushroom} />
-            </li>
+        <div className="mushroomsList">
+          {getActiveMushroom().map((mushroom) => (
+            <MushroomView
+              mushroom={mushroom}
+              {...mushroom}
+              key={mushroom.id}
+              expandChange={changeFocus}
+              activeMushroom={activeMushroom}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Mushrooms;
+export default Mushrooms

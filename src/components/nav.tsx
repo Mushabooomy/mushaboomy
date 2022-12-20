@@ -1,19 +1,27 @@
-import Link from "next/link";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-const Nav = () => (
-  <header>
-    <nav>
-      <Link href="/">
-        <h1>MUSH-A-BOOM!</h1>
-      </Link>
-      <Link href="/addmushroom/">
-        <button className="add">+ 🍄</button>
-      </Link>
-      <Link href="/mushrooms/">
-        <button className="mushrooms">Mushrooms</button>
-      </Link>
-    </nav>
-  </header>
-);
+const Nav = () => {
+  const router = useRouter()
+  const expanded = router.pathname === '/'
 
-export default Nav;
+  return (
+    <header>
+      <nav className={expanded ? 'expanded' : ''}>
+        <Link href="/">
+          <h1>MUSHROOM BOOM!</h1>
+        </Link>
+        <div>
+          <Link href="/addmushroom/">
+            <button className="add">🍄</button>
+          </Link>
+          <Link href="/mushrooms/">
+            <button className="mushrooms">Mushroom List</button>
+          </Link>
+        </div>
+      </nav>
+    </header>
+  )
+}
+
+export default Nav

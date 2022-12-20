@@ -1,0 +1,69 @@
+.details {
+  background-color: rgba($color: #000000, $alpha: 0.05);
+  margin: 0.25rem 0;
+  border-radius: 0.5rem;
+  opacity: 0.75;
+  transition: opacity 200ms ease-in, background-color 200ms ease-in;
+
+  &:nth-of-type(even) {
+    background-color: rgba($color: #ffffff, $alpha: 0.1);
+  }
+
+  &:hover:not([open]),
+  &:focus {
+    background-color: rgba($color: #71b3ff, $alpha: 0.2);
+    opacity: 1;
+  }
+
+  h3,
+  h4 {
+    margin: 0 0 1rem 0;
+    cursor: default;
+  }
+
+  h3 {
+    font-size: var(--font-size-l);
+  }
+  
+  h5 {
+    font-size: var(--font-size-l);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    // text-transform: uppercase;
+  }
+
+  p {
+    line-height: var(--font-size-l);
+  }
+
+  summary {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+    gap: 1rem;
+
+    &:focus {
+      background-color: rgba($color: #71b3ff, $alpha: 0.2);
+      opacity: 1;
+    }
+
+    img {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 0.5rem;
+    }
+
+    .titles {
+      display: inherit;
+      flex-direction: column;
+    }
+
+    &::marker {
+      content: '';
+    }
+  }
+}
+
+.content {
+  padding: 1rem;
+}
