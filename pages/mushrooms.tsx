@@ -11,7 +11,8 @@ const Mushrooms = () => {
   const [mushrooms, setMushrooms] = useState<Mushroom[]>([]);
 
   useEffect(() => {
-    handleGetAll(supabase, setMushrooms);
+    handleGetAll(supabase);
+    setMushrooms(data);
   }, []);
 
   return (
