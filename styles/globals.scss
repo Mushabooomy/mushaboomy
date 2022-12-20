@@ -1,7 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@100;200;400;600;700;800;900&family=Rubik+Puddles&display=swap');
 
 * {
   box-sizing: border-box;
+}
+
+:root {
+  --font-brand: font-family: 'Rubik Puddles', cursive;
+  --font-headlines: 'Barlow', sans-serif;
+  --font-paragraphs: 'Barlow', sans-serif;
+  --font-buttons: 'Barlow', sans-serif;
+
+  --font-size: 1rem;
+  --font-size-s: .75rem;
+  --font-size-l: 1.5rem;
+  --font-size-xl: 2rem;
 }
 
 html,
@@ -72,7 +84,7 @@ nav {
 
 nav h1 {
   font-size: 2.5rem;
-  font-family: 'Rubik Puddles', cursive;
+  font-family: var(--font-brand);
   color: white;
 }
 

@@ -37,8 +37,11 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
       </summary>
       <div className={styles.content}>
         <p className="description">{mushroom.description}</p>
+        <h5>Edibility</h5>
         <p className="edibility">{mushroom.edibility}</p>
+        <h5>Edibility Notes</h5>
         <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
+        <h5>Spore Print</h5>
         <p className="sportPrint">{mushroom.sporePrint}</p>
       </div>
     </details>

@@ -9,7 +9,7 @@
     background-color: rgba($color: #ffffff, $alpha: 0.1);
   }
 
-  &:hover,
+  &:hover:not([open]),
   &:focus {
     background-color: rgba($color: #71b3ff, $alpha: 0.2);
     opacity: 1;
@@ -22,7 +22,18 @@
   }
 
   h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-l);
+  }
+  
+  h5 {
+    font-size: var(--font-size-l);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    // text-transform: uppercase;
+  }
+
+  p {
+    line-height: var(--font-size-l);
   }
 
   summary {
