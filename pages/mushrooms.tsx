@@ -3,32 +3,23 @@ import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useEffect, useState } from 'react'
 import { Mushroom } from './addmushroom'
 import MushroomView from '../src/components/MushroomView'
+import { handleGetAll } from '../utils/db'
 
 const Mushrooms = () => {
   const session = useSession()
   const supabase = useSupabaseClient()
   const [mushrooms, setMushrooms] = useState<Mushroom[]>([])
   const [activeMushroom, setActiveMushroom] = useState<number | undefined>(
-    undefined,
+    undefined
   )
 
   useEffect(() => {
-    getData()
+    handleGetAll(supabase, setMushrooms)
   }, [])
 
   useEffect(() => {
     console.log('reload')
   }, [activeMushroom])
-
-  const getData = async () => {
-    const { data, error } = await supabase.from('mushroom').select('*')
-    if (data) {
-      await setMushrooms(data)
-    }
-    if (error) {
-      console.log(error)
-    }
-  }
 
   function changeFocus(id: number | undefined) {
     setActiveMushroom(id)
@@ -51,7 +42,7 @@ const Mushrooms = () => {
           theme='default'
         />
       ) : (
-        <div className="mushroomsList">
+        <div className='mushroomsList'>
           {getActiveMushroom().map((mushroom) => (
             <MushroomView
               mushroom={mushroom}
