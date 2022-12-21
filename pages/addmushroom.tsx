@@ -4,19 +4,6 @@ import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import { handleCreate } from '../utils/db';
 
-export interface Mushroom {
-  id?: number;
-  scientificName: string;
-  commonName: string;
-  description: string;
-  sporePrint: string;
-  edibility: string;
-  edibilityNotes: string;
-  photoUrl: string;
-  user_id?: string;
-  user_email?: string;
-}
-
 const AddMushroom = () => {
   const session = useSession();
   const supabase = useSupabaseClient();

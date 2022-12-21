@@ -1,5 +1,4 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import { Mushroom } from '../pages/addmushroom'
 
 export async function handleCreate(
   supabase: SupabaseClient,
