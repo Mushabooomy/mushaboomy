@@ -27,7 +27,7 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
   return (
     <details ref={ref} className={styles.details}>
       <summary onClick={toggleExpanded}>
-        <div className='thumbnailWrapper'>
+        <div className={styles.thumbnailWrapper}>
           <Image
             src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${mushroom.photoUrl}`}
             alt={mushroom.scientificName}
