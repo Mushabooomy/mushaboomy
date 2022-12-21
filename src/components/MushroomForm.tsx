@@ -1,147 +1,197 @@
-import { Dispatch, SetStateAction } from 'react'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { Session } from '@supabase/supabase-js'
+import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from 'react'
 
 interface FormProps {
-  handleSubmit: () => void
-  handlePhotoChange: (event: React.ChangeEvent) => void
-  scientificName: string
-  setScienctificName: Dispatch<SetStateAction<string>>
-  commonName: string
-  setCommonName: Dispatch<SetStateAction<string>>
-  description: string
-  setDescription: Dispatch<SetStateAction<string>>
-  sporePrint: string
-  setSporePrint: Dispatch<SetStateAction<string>>
-  edibility: string
-  setEdibility: Dispatch<SetStateAction<string>>
-  edibilityNotes: string
-  setEdibilityNotes: Dispatch<SetStateAction<string>>
-  forwardedRef: any
+  session: Session
 }
 
-const MushroomForm = (props: FormProps) => {
-  const {
-    handleSubmit,
-    handlePhotoChange,
-    scientificName,
-    setScienctificName,
-    commonName,
-    setCommonName,
-    description,
-    setDescription,
-    sporePrint,
-    setSporePrint,
-    edibility,
-    setEdibility,
-    edibilityNotes,
-    setEdibilityNotes,
-    forwardedRef,
-  } = props
+const MushroomForm = ({ session }: FormProps) => {
+  const supabase = useSupabaseClient()
+  const [photoFile, setPhotoFile] = useState<File | undefined>()
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState('')
+  const [loading, setLoading] = useState(true)
+  const ref = useRef<HTMLInputElement | null>(null)
+  const [formState, setFormState] = useState<Mushroom>({
+    scientificName: '',
+    commonName: '',
+    description: '',
+    sporePrint: '',
+    edibility: '',
+    edibilityNotes: '',
+    photoUrl: '',
+  })
+
+  const addMushroom = async () => {
+    const mushroom: Mushroom = formState
+    setLoading(true)
+    await handleCreate(supabase, mushroom)
+    clearForm()
+    setLoading(false)
+  }
+
+  const uploadPhoto = async () => {
+    setPhotoUploading(true)
+    try {
+      const newFileName = `${session?.user.id}-${photoFile?.name}`
+      const filePath = `${newFileName}`
+      setPhotoUrl(filePath)
+      const { error: uploadError } = await supabase.storage
+        .from('mushroom-photos')
+        .upload(filePath, photoFile!, { cacheControl: '3600', upsert: false })
+      if (uploadError) {
+        throw uploadError
+      } else {
+        addMushroom()
+      }
+    } catch (error) {
+      alert('Error uploading photo.  Mushroom record not created')
+      console.log(error)
+    } finally {
+      setPhotoUploading(false)
+    }
+  }
+
+  const handlePhotoChange = async (e: ChangeEvent) => {
+    console.log(photoUploading)
+    setPhotoUploading(true)
+    if (
+      !(e.target as HTMLInputElement).files ||
+      (e.target as HTMLInputElement).files?.length === 0
+    ) {
+      throw new Error('You must select an image to upload.')
+    }
+    setPhotoFile((e.target as HTMLInputElement).files![0])
+  }
+
+  const handleFieldChange = (object: Mushroom) => {
+    setFormState(object)
+  }
+
+  const clearForm = () => {
+    setFormState({
+      scientificName: '',
+      commonName: '',
+      description: '',
+      sporePrint: '',
+      edibility: '',
+      edibilityNotes: '',
+      photoUrl: '',
+    })
+
+    ref.current!.value = ''
+  }
+
+  const handleSubmit = () => {
+    uploadPhoto()
+  }
+
   return (
-    <div className='flex-column' id='addMushroom'>
-      <label htmlFor='scientificName'>Scientific Name</label>
+    <div className="flex-column" id="addMushroom">
+      <label htmlFor="scientificName">Scientific Name</label>
       <input
-        type='text'
-        name='scientificName'
-        id='scientificName'
-        value={scientificName}
+        type="text"
+        name="scientificName"
+        id="scientificName"
+        value={formState.scientificName}
         onChange={(e) => {
-          setScienctificName(e.target.value)
+          handleFieldChange({ ...formState, scientificName: e.target.value })
         }}
       />
-      <label htmlFor='commonName'>Common Name</label>
+      <label htmlFor="commonName">Common Name</label>
       <input
-        type='text'
-        name='commonName'
-        id='commonName'
-        value={commonName}
+        type="text"
+        name="commonName"
+        id="commonName"
+        value={formState.commonName}
         onChange={(e) => {
-          setCommonName(e.target.value)
+          handleFieldChange(e.target.value)
         }}
       />
-      <label htmlFor='pictures'>Upload Pictures</label>
+      <label htmlFor="pictures">Upload Pictures</label>
       <input
-        name='pictures'
-        id='pictures'
-        type='file'
+        name="pictures"
+        id="pictures"
+        type="file"
         ref={forwardedRef}
         onChange={(e) => handlePhotoChange(e)}
       />
-      <label htmlFor='description'>Description</label>
+      <label htmlFor="description">Description</label>
       <textarea
-        name='description'
-        id='comment'
-        value={description}
+        name="description"
+        id="comment"
+        value={formState.description}
         rows={4}
         onChange={(e) => {
-          setDescription(e.target.value)
+          handleFieldChange(e.target.value)
         }}
       />
-      <label htmlFor='sporePrint'>Spore Print (Color)</label>
+      <label htmlFor="sporePrint">Spore Print (Color)</label>
       <input
-        type='text'
-        name='sporePrint'
-        id='sporePrint'
-        value={sporePrint}
+        type="text"
+        name="sporePrint"
+        id="sporePrint"
+        value={formState.sporePrint}
         onChange={(e) => {
-          setSporePrint(e.target.value)
+          handleFieldChange(e.target.value)
         }}
       />
       <label>Edibility</label>
       <fieldset
-        id='edibility'
-        // @ts-ignore
-        value={edibility}
+        id="edibility"
+        value={formState.edibility}
         onChange={(e) => {
           setEdibility((e.target as HTMLInputElement).value)
         }}
       >
         <label>
           <input
-            type='radio'
-            checked={edibility === 'Edible'}
-            value='Edible'
-            name='edibility'
+            type="radio"
+            checked={formState.edibility === 'Edible'}
+            value="Edible"
+            name="edibility"
           />{' '}
           Edible
         </label>
         <label>
           <input
-            type='radio'
-            checked={edibility === 'Inedible'}
-            value='Inedible'
-            name='edibility'
+            type="radio"
+            checked={formState.edibility === 'Inedible'}
+            value="Inedible"
+            name="edibility"
           />{' '}
           Inedible
         </label>
         <label>
           <input
-            type='radio'
-            checked={edibility === 'Poisonous'}
-            value='Poisonous'
-            name='edibility'
+            type="radio"
+            checked={formState.edibility === 'Poisonous'}
+            value="Poisonous"
+            name="edibility"
           />{' '}
           Poisonous
         </label>
         <label>
           <input
-            type='radio'
-            checked={edibility === 'Unknown'}
-            value='Unknown'
-            name='edibility'
+            type="radio"
+            checked={formState.edibility === 'Unknown'}
+            value="Unknown"
+            name="edibility"
           />{' '}
           Unknown
         </label>
       </fieldset>
-      <label htmlFor='edibilityNotes'>Edibility Notes</label>
+      <label htmlFor="edibilityNotes">Edibility Notes</label>
       <textarea
-        name='edibilityNotes'
-        id='edibilityNotes'
+        name="edibilityNotes"
+        id="edibilityNotes"
         rows={2}
-        value={edibilityNotes}
-        onChange={(e) => setEdibilityNotes(e.target.value)}
+        value={formState.edibilityNotes}
+        onChange={(e) => handleFieldChange(e.target.value)}
       />
       <button
-        type='submit'
+        type="submit"
         onClick={(e) => {
           e.preventDefault()
           handleSubmit()
