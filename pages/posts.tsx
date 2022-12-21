@@ -2,15 +2,6 @@ import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { SyntheticEvent, useEffect, useState } from "react";
 
-interface Post {
-  content: string;
-  id: number;
-  inserted_at: string;
-  title: string;
-  user_email: string;
-  user_id: string;
-}
-
 const AddMushroom = () => {
   console.log("posts");
 
