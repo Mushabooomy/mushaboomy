@@ -15,7 +15,7 @@ const Home = () => {
         continue to learn more about these fascinating organisms.
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

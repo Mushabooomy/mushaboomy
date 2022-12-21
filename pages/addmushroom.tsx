@@ -3,35 +3,21 @@ import { useState, useRef, ChangeEvent } from 'react'
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { handleCreate } from '../utils/db'
-import MushroomForm from '../src/components/MushroomForm'
-
-export interface Mushroom {
-  id?: number
-  scientificName: string
-  commonName: string
-  description: string
-  sporePrint: string
-  edibility: string
-  edibilityNotes: string
-  photoUrl: string
-  user_id?: string
-  user_email?: string
-}
 
 const AddMushroom = () => {
   const session = useSession()
   const supabase = useSupabaseClient()
   const [loading, setLoading] = useState(true)
-  const [photoUploading, setPhotoUploading] = useState(false)
   const [scientificName, setScienctificName] = useState('')
   const [commonName, setCommonName] = useState('')
   const [description, setDescription] = useState('')
   const [sporePrint, setSporePrint] = useState('')
   const [edibility, setEdibility] = useState('')
   const [edibilityNotes, setEdibilityNotes] = useState('')
-  const [photoUrl, setPhotoUrl] = useState('')
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const ref = useRef<HTMLInputElement | null>(null)
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState('')
 
   const addMushroom = async () => {
     const mushroom: Mushroom = {
@@ -72,7 +58,7 @@ const AddMushroom = () => {
       setPhotoUploading(false)
     }
   }
-
+  
   const handlePhotoChange = async (e: ChangeEvent) => {
     console.log(photoUploading)
     setPhotoUploading(true)
@@ -99,6 +85,7 @@ const AddMushroom = () => {
   const handleSubmit = () => {
     uploadPhoto()
   }
+  console.log(loading)
   return (
     <div>
       {!session ? (
