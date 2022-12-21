@@ -3,7 +3,7 @@ import { Mushroom } from '../pages/addmushroom'
 
 export async function handleCreate(
   supabase: SupabaseClient,
-  mushroom: Mushroom,
+  mushroom: Mushroom
 ) {
   try {
     const { error } = await supabase.from('mushroom').insert(mushroom).single()
@@ -17,7 +17,7 @@ export async function handleCreate(
 
 export async function handleUpdate(
   supabase: SupabaseClient,
-  mushroom: Mushroom,
+  mushroom: Mushroom
 ) {
   try {
     const { error } = await supabase
@@ -34,7 +34,7 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
-  setMushrooms: (data: unknown) => void,
+  setMushrooms: (data: unknown) => void
 ) {
   try {
     const { data, error } = await supabase.from('mushroom').select('*')
@@ -62,7 +62,7 @@ export async function handleGetOne(supabase: SupabaseClient, id: string) {
 
 export async function handleDeleteOne(supabase: SupabaseClient, id: string) {
   try {
-    const { error } = await supabase.from('mushroom').delete('*').eq('id', id)
+    const { error } = await supabase.from('mushroom').delete().eq('id', id)
     if (error) throw error
     alert('Mushroom record deleted.')
   } catch (error) {

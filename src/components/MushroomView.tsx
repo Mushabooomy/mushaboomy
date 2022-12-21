@@ -1,26 +1,26 @@
-import React, { useEffect, useRef } from 'react';
-import { Mushroom } from '../../pages/addmushroom';
-import styles from '../../styles/MushroomView.module.scss';
-import Image from 'next/image';
+import React, { useEffect, useRef } from 'react'
+import { Mushroom } from '../../pages/addmushroom'
+import styles from '../../styles/MushroomView.module.scss'
+import Image from 'next/image'
 
 type Props = {
-  mushroom: Mushroom;
-  expandChange: (id: number | undefined) => void;
-  activeMushroom: number | undefined;
-};
+  mushroom: Mushroom
+  expandChange: (id: number | undefined) => void
+  activeMushroom: number | undefined
+}
 
 const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
-  const ref = useRef<HTMLDetailsElement | null>(null);
+  const ref = useRef<HTMLDetailsElement | null>(null)
 
   useEffect(() => {
-    console.log('init', activeMushroom);
-  }, []);
+    console.log('init', activeMushroom)
+  }, [])
 
   function toggleExpanded() {
-    if (ref.current!.open) {
-      expandChange(undefined);
+    if (ref.current?.open) {
+      expandChange(undefined)
     } else {
-      expandChange(mushroom.id);
+      expandChange(mushroom.id)
     }
   }
 
@@ -49,7 +49,7 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
         <p className='sportPrint'>{mushroom.sporePrint}</p>
       </div>
     </details>
-  );
-};
+  )
+}
 
-export default MushroomView;
+export default MushroomView
