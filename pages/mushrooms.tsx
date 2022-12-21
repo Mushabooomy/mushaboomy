@@ -8,7 +8,7 @@ const Mushrooms = () => {
   const supabase = useSupabaseClient()
   const [mushrooms, setMushrooms] = useState<Mushroom[]>([])
   const [activeMushroom, setActiveMushroom] = useState<number | undefined>(
-    undefined,
+    undefined
   )
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const Mushrooms = () => {
           theme='default'
         />
       ) : (
-        <div className="mushroomsList">
+        <div className='mushroomsList'>
           {getActiveMushroom().map((mushroom) => (
             <MushroomView
               mushroom={mushroom}
