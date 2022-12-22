@@ -22,6 +22,8 @@ const MushroomForm = ({ session }: FormProps) => {
     edibility: '',
     edibilityNotes: '',
     photoUrl: '',
+    user_id: session?.user.id,
+    user_email: session?.user.email,
   })
   const [alertState, setAlertState] = useState<AlertProps>({
     message: '',
@@ -39,15 +41,16 @@ const MushroomForm = ({ session }: FormProps) => {
   const uploadPhoto = async () => {
     setPhotoUploading(true)
     try {
-      const newFileName = `${session?.user.id}-${photoFile?.name}`
-      const filePath = `${newFileName}`
       const { error: uploadError } = await supabase.storage
         .from('mushroom-photos')
-        .upload(filePath, photoFile!, { cacheControl: '3600', upsert: false })
+        .upload(formState.photoUrl, photoFile!, {
+          cacheControl: '3600',
+          upsert: false,
+        })
       if (uploadError) {
         throw uploadError
       } else {
-        addMushroom()
+        await addMushroom()
       }
     } catch (uploadError) {
       setAlertState({
@@ -58,6 +61,12 @@ const MushroomForm = ({ session }: FormProps) => {
     } finally {
       setPhotoUploading(false)
     }
+  }
+
+  const setPhotoUrl = () => {
+    const newFileName = `${session?.user.id}-${photoFile?.name}`
+    const filePath = `${newFileName}`
+    setFormState({ ...formState, photoUrl: filePath })
   }
 
   const handlePhotoChange = async (e: ChangeEvent) => {
@@ -72,6 +81,7 @@ const MushroomForm = ({ session }: FormProps) => {
       throw new Error('You must select an image to upload.')
     }
     await setPhotoFile((e.target as HTMLInputElement).files![0])
+    setPhotoUrl()
   }
 
   const handleFieldChange = (object: Mushroom) => {
@@ -97,55 +107,55 @@ const MushroomForm = ({ session }: FormProps) => {
   }
 
   return (
-    <div className="flex-column" id="addMushroom">
+    <div className='flex-column' id='addMushroom'>
       <Alert {...alertState} />
-      <label htmlFor="scientificName">Scientific Name</label>
+      <label htmlFor='scientificName'>Scientific Name</label>
       <input
-        type="text"
-        name="scientificName"
-        id="scientificName"
+        type='text'
+        name='scientificName'
+        id='scientificName'
         value={formState.scientificName}
         onChange={(e) => {
           handleFieldChange({ ...formState, scientificName: e.target.value })
         }}
       />
-      <label htmlFor="commonName">Common Name</label>
+      <label htmlFor='commonName'>Common Name</label>
       <input
-        type="text"
-        name="commonName"
-        id="commonName"
+        type='text'
+        name='commonName'
+        id='commonName'
         value={formState.commonName}
         onChange={(e) => {
           handleFieldChange({ ...formState, commonName: e.target.value })
         }}
       />
-      <label htmlFor="pictures">Upload Pictures</label>
+      <label htmlFor='pictures'>Upload Pictures</label>
       {!photoUploading ? (
         <input
-          name="pictures"
-          id="pictures"
-          type="file"
+          name='pictures'
+          id='pictures'
+          type='file'
           ref={ref}
           onChange={(e) => handlePhotoChange(e)}
         />
       ) : (
         <p>Loading . . . </p>
       )}
-      <label htmlFor="description">Description</label>
+      <label htmlFor='description'>Description</label>
       <textarea
-        name="description"
-        id="comment"
+        name='description'
+        id='comment'
         value={formState.description}
         rows={4}
         onChange={(e) => {
           handleFieldChange({ ...formState, description: e.target.value })
         }}
       />
-      <label htmlFor="sporePrint">Spore Print (Color)</label>
+      <label htmlFor='sporePrint'>Spore Print (Color)</label>
       <input
-        type="text"
-        name="sporePrint"
-        id="sporePrint"
+        type='text'
+        name='sporePrint'
+        id='sporePrint'
         value={formState.sporePrint}
         onChange={(e) => {
           handleFieldChange({ ...formState, sporePrint: e.target.value })
@@ -153,7 +163,7 @@ const MushroomForm = ({ session }: FormProps) => {
       />
       <label>Edibility</label>
       <fieldset
-        id="edibility"
+        id='edibility'
         onChange={(e) => {
           handleFieldChange({
             ...formState,
@@ -163,45 +173,45 @@ const MushroomForm = ({ session }: FormProps) => {
       >
         <label>
           <input
-            type="radio"
+            type='radio'
             checked={formState.edibility === 'Edible'}
-            value="Edible"
-            name="edibility"
+            value='Edible'
+            name='edibility'
           />{' '}
           Edible
         </label>
         <label>
           <input
-            type="radio"
+            type='radio'
             checked={formState.edibility === 'Inedible'}
-            value="Inedible"
-            name="edibility"
+            value='Inedible'
+            name='edibility'
           />{' '}
           Inedible
         </label>
         <label>
           <input
-            type="radio"
+            type='radio'
             checked={formState.edibility === 'Poisonous'}
-            value="Poisonous"
-            name="edibility"
+            value='Poisonous'
+            name='edibility'
           />{' '}
           Poisonous
         </label>
         <label>
           <input
-            type="radio"
+            type='radio'
             checked={formState.edibility === 'Unknown'}
-            value="Unknown"
-            name="edibility"
+            value='Unknown'
+            name='edibility'
           />{' '}
           Unknown
         </label>
       </fieldset>
-      <label htmlFor="edibilityNotes">Edibility Notes</label>
+      <label htmlFor='edibilityNotes'>Edibility Notes</label>
       <textarea
-        name="edibilityNotes"
-        id="edibilityNotes"
+        name='edibilityNotes'
+        id='edibilityNotes'
         rows={2}
         value={formState.edibilityNotes}
         onChange={(e) =>
@@ -209,7 +219,7 @@ const MushroomForm = ({ session }: FormProps) => {
         }
       />
       <button
-        type="submit"
+        type='submit'
         onClick={(e) => {
           e.preventDefault()
           handleSubmit()
