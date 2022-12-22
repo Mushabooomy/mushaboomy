@@ -110,6 +110,28 @@ ul.mushroomsList {
   list-style: none;
 }
 
+.alert{
+  display: block;
+  padding: 1rem;
+  background-color: none;
+
+  &.error {
+    background-color: red;
+    color: wheat;
+  }
+  &.warning {
+    background-color: orange;
+    color: black;
+  }
+  &.success {
+    background-color: lightblue;
+    color: black;
+  }
+  &.none {
+    display: none;
+  }
+}
+
 .flex {
   display: flex;
 }
