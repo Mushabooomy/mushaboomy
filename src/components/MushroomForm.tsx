@@ -1,6 +1,7 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
-import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
+import { handleCreate } from '../../utils/db'
 
 interface FormProps {
   session: Session
@@ -10,7 +11,6 @@ const MushroomForm = ({ session }: FormProps) => {
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
-  const [photoUrl, setPhotoUrl] = useState('')
   const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
   const [formState, setFormState] = useState<Mushroom>({
@@ -36,7 +36,6 @@ const MushroomForm = ({ session }: FormProps) => {
     try {
       const newFileName = `${session?.user.id}-${photoFile?.name}`
       const filePath = `${newFileName}`
-      setPhotoUrl(filePath)
       const { error: uploadError } = await supabase.storage
         .from('mushroom-photos')
         .upload(filePath, photoFile!, { cacheControl: '3600', upsert: false })
@@ -45,24 +44,22 @@ const MushroomForm = ({ session }: FormProps) => {
       } else {
         addMushroom()
       }
-    } catch (error) {
+    } catch (uploadError) {
       alert('Error uploading photo.  Mushroom record not created')
-      console.log(error)
+      console.log(uploadError)
     } finally {
       setPhotoUploading(false)
     }
   }
 
   const handlePhotoChange = async (e: ChangeEvent) => {
-    console.log(photoUploading)
-    setPhotoUploading(true)
     if (
       !(e.target as HTMLInputElement).files ||
       (e.target as HTMLInputElement).files?.length === 0
     ) {
       throw new Error('You must select an image to upload.')
     }
-    setPhotoFile((e.target as HTMLInputElement).files![0])
+    await setPhotoFile((e.target as HTMLInputElement).files![0])
   }
 
   const handleFieldChange = (object: Mushroom) => {
@@ -106,17 +103,21 @@ const MushroomForm = ({ session }: FormProps) => {
         id="commonName"
         value={formState.commonName}
         onChange={(e) => {
-          handleFieldChange(e.target.value)
+          handleFieldChange({ ...formState, commonName: e.target.value })
         }}
       />
       <label htmlFor="pictures">Upload Pictures</label>
-      <input
-        name="pictures"
-        id="pictures"
-        type="file"
-        ref={forwardedRef}
-        onChange={(e) => handlePhotoChange(e)}
-      />
+      {!photoUploading ? (
+        <input
+          name="pictures"
+          id="pictures"
+          type="file"
+          ref={ref}
+          onChange={(e) => handlePhotoChange(e)}
+        />
+      ) : (
+        <p>Loading . . . </p>
+      )}
       <label htmlFor="description">Description</label>
       <textarea
         name="description"
@@ -124,7 +125,7 @@ const MushroomForm = ({ session }: FormProps) => {
         value={formState.description}
         rows={4}
         onChange={(e) => {
-          handleFieldChange(e.target.value)
+          handleFieldChange({ ...formState, description: e.target.value })
         }}
       />
       <label htmlFor="sporePrint">Spore Print (Color)</label>
@@ -134,15 +135,17 @@ const MushroomForm = ({ session }: FormProps) => {
         id="sporePrint"
         value={formState.sporePrint}
         onChange={(e) => {
-          handleFieldChange(e.target.value)
+          handleFieldChange({ ...formState, sporePrint: e.target.value })
         }}
       />
       <label>Edibility</label>
       <fieldset
         id="edibility"
-        value={formState.edibility}
         onChange={(e) => {
-          setEdibility((e.target as HTMLInputElement).value)
+          handleFieldChange({
+            ...formState,
+            edibility: (e.target as HTMLInputElement).value,
+          })
         }}
       >
         <label>
@@ -188,7 +191,9 @@ const MushroomForm = ({ session }: FormProps) => {
         id="edibilityNotes"
         rows={2}
         value={formState.edibilityNotes}
-        onChange={(e) => handleFieldChange(e.target.value)}
+        onChange={(e) =>
+          handleFieldChange({ ...formState, edibilityNotes: e.target.value })
+        }
       />
       <button
         type="submit"
