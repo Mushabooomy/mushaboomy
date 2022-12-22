@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useRef } from 'react'
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import MushroomForm from '../src/components/MushroomForm'
@@ -14,7 +13,7 @@ const AddMushroom = () => {
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
-          theme="default"
+          theme='default'
         />
       ) : (
         <div>

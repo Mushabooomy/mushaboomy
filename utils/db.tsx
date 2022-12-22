@@ -3,7 +3,7 @@ import { SetStateAction } from 'react'
 
 export async function handleCreate(
   supabase: SupabaseClient,
-  mushroom: Mushroom,
+  mushroom: Mushroom
 ) {
   try {
     const { error } = await supabase.from('mushroom').insert(mushroom).single()
@@ -17,7 +17,7 @@ export async function handleCreate(
 
 export async function handleUpdate(
   supabase: SupabaseClient,
-  mushroom: Mushroom,
+  mushroom: Mushroom
 ) {
   try {
     const { error } = await supabase
@@ -36,7 +36,7 @@ export async function handleGetAll(
   supabase: SupabaseClient,
   setMushrooms: {
     (value: SetStateAction<Mushroom[]>): void
-  },
+  }
 ) {
   try {
     const { data, error } = await supabase.from('mushroom').select('*')
@@ -69,6 +69,22 @@ export async function handleDeleteOne(supabase: SupabaseClient, id: string) {
     alert('Mushroom record deleted.')
   } catch (error) {
     alert('Error deleting mushroom record.')
+    console.log(error)
+  }
+}
+
+export async function handleDeletePhoto(
+  supabase: SupabaseClient,
+  photoUrl: string[]
+) {
+  try {
+    const { error } = await supabase.storage
+      .from('mushroom-photos')
+      .remove(photoUrl)
+    if (error) throw error
+    alert('Mushroom photo deleted.')
+  } catch (error) {
+    alert('Error deleting mushroom photo.')
     console.log(error)
   }
 }

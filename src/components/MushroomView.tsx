@@ -1,16 +1,26 @@
-import React, { useEffect, useRef } from 'react'
-import { Mushroom } from '../../pages/addmushroom'
+import React, { useEffect, useRef, useState } from 'react'
+import { SupabaseClient } from '@supabase/supabase-js'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
+import { handleDeleteOne, handleDeletePhoto } from '../../utils/db'
 
 type Props = {
   mushroom: Mushroom
   expandChange: (id: number | undefined) => void
   activeMushroom: number | undefined
+  supabase: SupabaseClient
+  setActiveMushroom: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
+const MushroomView = ({
+  mushroom,
+  expandChange,
+  activeMushroom,
+  supabase,
+  setActiveMushroom,
+}: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
+  const [toggle, setToggle] = useState(false)
 
   useEffect(() => {
     console.log('init', activeMushroom)
@@ -19,6 +29,7 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
   function toggleExpanded() {
     if (ref.current?.open) {
       expandChange(undefined)
+      setToggle(!toggle)
     } else {
       expandChange(mushroom.id)
     }
@@ -40,13 +51,43 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
         </div>
       </summary>
       <div className={styles.content}>
+        <h5>Description</h5>
         <p className='description'>{mushroom.description}</p>
         <h5>Edibility</h5>
         <p className='edibility'>{mushroom.edibility}</p>
         <h5>Edibility Notes</h5>
         <p className='edibilityNotes'>{mushroom.edibilityNotes}</p>
         <h5>Spore Print</h5>
-        <p className='sportPrint'>{mushroom.sporePrint}</p>
+        <p className='sporePrint'>{mushroom.sporePrint}</p>
+        <div className={styles.edit}>
+          {activeMushroom ? (
+            <Image
+              className={styles.editImage}
+              src='/images/EditIcon.png'
+              alt='Edit button'
+              height='25'
+              width='25'
+              onClick={() => setToggle(!toggle)}
+            />
+          ) : null}
+          {toggle ? (
+            <div className={styles.edit}>
+              <button>Edit 🍄</button>
+              <button
+                onClick={() => {
+                  Promise.all([
+                    handleDeleteOne(supabase, mushroom.id),
+                    handleDeletePhoto(supabase, mushroom.photoUrl),
+                  ]).then(() => {
+                    setActiveMushroom(undefined)
+                  })
+                }}
+              >
+                Delete 🍄
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
     </details>
   )

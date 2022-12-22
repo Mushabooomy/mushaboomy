@@ -12,7 +12,7 @@ const MushroomForm = ({ session }: FormProps) => {
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
-  const [loading, setLoading] = useState(true)
+  // const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
   const [formState, setFormState] = useState<Mushroom>({
     scientificName: '',
@@ -32,10 +32,10 @@ const MushroomForm = ({ session }: FormProps) => {
 
   const addMushroom = async () => {
     const mushroom: Mushroom = formState
-    setLoading(true)
+    // setLoading(true)
     await handleCreate(supabase, mushroom)
     clearForm()
-    setLoading(false)
+    // setLoading(false)
   }
 
   const uploadPhoto = async () => {
@@ -53,6 +53,7 @@ const MushroomForm = ({ session }: FormProps) => {
         await addMushroom()
       }
     } catch (uploadError) {
+      console.log({ uploadError })
       setAlertState({
         message: 'Error uploading photo.  Mushroom record not created',
         type: 'error',
@@ -63,8 +64,8 @@ const MushroomForm = ({ session }: FormProps) => {
     }
   }
 
-  const setPhotoUrl = () => {
-    const newFileName = `${session?.user.id}-${photoFile?.name}`
+  const setPhotoUrl = (name: string) => {
+    const newFileName = `${session?.user.id}-${name}`
     const filePath = `${newFileName}`
     setFormState({ ...formState, photoUrl: filePath })
   }
@@ -80,8 +81,9 @@ const MushroomForm = ({ session }: FormProps) => {
       })
       throw new Error('You must select an image to upload.')
     }
-    await setPhotoFile((e.target as HTMLInputElement).files![0])
-    setPhotoUrl()
+    const file = (e.target as HTMLInputElement).files?.[0]
+    setPhotoFile(file)
+    setPhotoUrl(file.name)
   }
 
   const handleFieldChange = (object: Mushroom) => {

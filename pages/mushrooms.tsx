@@ -14,7 +14,7 @@ const Mushrooms = () => {
 
   useEffect(() => {
     handleGetAll(supabase, setMushrooms)
-  }, [])
+  }, [activeMushroom])
 
   useEffect(() => {
     console.log('reload')
@@ -49,6 +49,8 @@ const Mushrooms = () => {
               key={mushroom.id}
               expandChange={changeFocus}
               activeMushroom={activeMushroom}
+              supabase={supabase}
+              setActiveMushroom={setActiveMushroom}
             />
           ))}
         </div>
