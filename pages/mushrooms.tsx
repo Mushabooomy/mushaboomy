@@ -51,6 +51,7 @@ const Mushrooms = () => {
               activeMushroom={activeMushroom}
               supabase={supabase}
               setActiveMushroom={setActiveMushroom}
+              session={session}
             />
           ))}
         </div>

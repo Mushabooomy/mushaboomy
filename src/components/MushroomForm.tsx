@@ -1,14 +1,15 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
-import { ChangeEvent, useRef, useState } from 'react'
-import { handleCreate } from '../../utils/db'
+import { ChangeEvent, useRef, useState, useEffect } from 'react'
+import { handleCreate, handleUpdate } from '../../utils/db'
 import Alert from './Alert'
 
 interface FormProps {
   session: Session
+  mushroomEdit: object | null
 }
 
-const MushroomForm = ({ session }: FormProps) => {
+const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
@@ -30,12 +31,24 @@ const MushroomForm = ({ session }: FormProps) => {
     type: 'none',
   })
 
+  useEffect(() => {
+    if (mushroomEdit) {
+      handleFieldChange(mushroomEdit)
+    }
+  }, [])
+
   const addMushroom = async () => {
     const mushroom: Mushroom = formState
     // setLoading(true)
     await handleCreate(supabase, mushroom)
     clearForm()
     // setLoading(false)
+  }
+
+  const updateMushroom = async () => {
+    const mushroom: Mushroom = formState
+    await handleUpdate(supabase, mushroom)
+    clearForm()
   }
 
   const uploadPhoto = async () => {
@@ -49,8 +62,6 @@ const MushroomForm = ({ session }: FormProps) => {
         })
       if (uploadError) {
         throw uploadError
-      } else {
-        await addMushroom()
       }
     } catch (uploadError) {
       console.log({ uploadError })
@@ -102,10 +113,6 @@ const MushroomForm = ({ session }: FormProps) => {
     })
 
     ref.current!.value = ''
-  }
-
-  const handleSubmit = () => {
-    uploadPhoto()
   }
 
   return (
@@ -220,15 +227,28 @@ const MushroomForm = ({ session }: FormProps) => {
           handleFieldChange({ ...formState, edibilityNotes: e.target.value })
         }
       />
-      <button
-        type='submit'
-        onClick={(e) => {
-          e.preventDefault()
-          handleSubmit()
-        }}
-      >
-        Submit
-      </button>
+      {mushroomEdit ? (
+        <button
+          type='submit'
+          onClick={async (e) => {
+            e.preventDefault()
+            await updateMushroom()
+          }}
+        >
+          Submit update.
+        </button>
+      ) : (
+        <button
+          type='submit'
+          onClick={async (e) => {
+            e.preventDefault()
+            await uploadPhoto()
+            await addMushroom()
+          }}
+        >
+          Submit
+        </button>
+      )}
     </div>
   )
 }

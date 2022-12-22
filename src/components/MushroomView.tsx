@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { SupabaseClient } from '@supabase/supabase-js'
+import { Session, SupabaseClient } from '@supabase/supabase-js'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
 import { handleDeleteOne, handleDeletePhoto } from '../../utils/db'
+import MushroomForm from './MushroomForm'
 
 type Props = {
   mushroom: Mushroom
@@ -10,6 +11,7 @@ type Props = {
   activeMushroom: number | undefined
   supabase: SupabaseClient
   setActiveMushroom: React.Dispatch<React.SetStateAction<number | undefined>>
+  session: Session
 }
 
 const MushroomView = ({
@@ -18,9 +20,11 @@ const MushroomView = ({
   activeMushroom,
   supabase,
   setActiveMushroom,
+  session,
 }: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
   const [toggle, setToggle] = useState(false)
+  const [toggleEdit, setToggleEdit] = useState(false)
 
   useEffect(() => {
     console.log('init', activeMushroom)
@@ -72,7 +76,13 @@ const MushroomView = ({
           ) : null}
           {toggle ? (
             <div className={styles.edit}>
-              <button>Edit 🍄</button>
+              <button
+                onClick={() => {
+                  setToggleEdit(!toggleEdit)
+                }}
+              >
+                Edit 🍄
+              </button>
               <button
                 onClick={() => {
                   Promise.all([
@@ -89,6 +99,9 @@ const MushroomView = ({
           ) : null}
         </div>
       </div>
+      {toggleEdit ? (
+        <MushroomForm session={session} mushroomEdit={mushroom} />
+      ) : null}
     </details>
   )
 }
