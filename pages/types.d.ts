@@ -19,3 +19,8 @@ interface Post {
   user_email: string
   user_id: string
 }
+
+type AlertProps = {
+  message: string
+  type: 'error' | 'warning' | 'success' | 'none'
+}
