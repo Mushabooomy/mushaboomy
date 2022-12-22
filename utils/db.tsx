@@ -1,8 +1,9 @@
 import { SupabaseClient } from '@supabase/supabase-js'
+import { SetStateAction } from 'react'
 
 export async function handleCreate(
   supabase: SupabaseClient,
-  mushroom: Mushroom
+  mushroom: Mushroom,
 ) {
   try {
     const { error } = await supabase.from('mushroom').insert(mushroom).single()
@@ -16,7 +17,7 @@ export async function handleCreate(
 
 export async function handleUpdate(
   supabase: SupabaseClient,
-  mushroom: Mushroom
+  mushroom: Mushroom,
 ) {
   try {
     const { error } = await supabase
@@ -33,7 +34,9 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
-  setMushrooms: (data: unknown) => void
+  setMushrooms: {
+    (value: SetStateAction<Mushroom[]>): void
+  },
 ) {
   try {
     const { data, error } = await supabase.from('mushroom').select('*')
