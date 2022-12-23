@@ -62,7 +62,7 @@ export async function handleGetOne(supabase: SupabaseClient, id: string) {
   }
 }
 
-export async function handleDeleteOne(supabase: SupabaseClient, id: string) {
+export async function handleDeleteOne(supabase: SupabaseClient, id?: number) {
   try {
     const { error } = await supabase.from('mushroom').delete().eq('id', id)
     if (error) throw error
@@ -75,12 +75,12 @@ export async function handleDeleteOne(supabase: SupabaseClient, id: string) {
 
 export async function handleDeletePhoto(
   supabase: SupabaseClient,
-  photoUrl: string[]
+  photoUrl: string
 ) {
   try {
     const { error } = await supabase.storage
       .from('mushroom-photos')
-      .remove(photoUrl)
+      .remove([photoUrl])
     if (error) throw error
     alert('Mushroom photo deleted.')
   } catch (error) {

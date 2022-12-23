@@ -1,12 +1,12 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
-import { ChangeEvent, useRef, useState, useEffect } from 'react'
+import { ChangeEvent, useRef, useState, useEffect, SetStateAction } from 'react'
 import { handleCreate, handleUpdate } from '../../utils/db'
 import Alert from './Alert'
 
 interface FormProps {
   session: Session
-  mushroomEdit: object | null
+  mushroomEdit?: Mushroom
 }
 
 const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
@@ -92,7 +92,8 @@ const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
       })
       throw new Error('You must select an image to upload.')
     }
-    const file = (e.target as HTMLInputElement).files?.[0]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const file: any = (e.target as HTMLInputElement).files?.[0]
     setPhotoFile(file)
     setPhotoUrl(file.name)
   }
