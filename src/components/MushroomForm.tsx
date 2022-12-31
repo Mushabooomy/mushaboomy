@@ -1,15 +1,30 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
-import { ChangeEvent, useRef, useState, useEffect, SetStateAction } from 'react'
+import styles from '../../styles/FormView.module.scss'
+import {
+  ChangeEvent,
+  useRef,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react'
 import { handleCreate, handleUpdate } from '../../utils/db'
 import Alert from './Alert'
 
 interface FormProps {
   session: Session
   mushroomEdit?: Mushroom
+  setToggleEdit: Dispatch<SetStateAction<boolean>>
+  toggleExpanded: () => void
 }
 
-const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
+const MushroomForm = ({
+  session,
+  mushroomEdit,
+  setToggleEdit,
+  toggleExpanded,
+}: FormProps) => {
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
@@ -117,7 +132,7 @@ const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
   }
 
   return (
-    <div className='flex-column' id='addMushroom'>
+    <div className={styles.formWrapper}>
       <Alert {...alertState} />
       <label htmlFor='scientificName'>Scientific Name</label>
       <input
@@ -139,7 +154,7 @@ const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
           handleFieldChange({ ...formState, commonName: e.target.value })
         }}
       />
-      <label htmlFor='pictures'>Upload Pictures</label>
+      <label htmlFor='pictures'>Picture</label>
       {!photoUploading ? (
         <input
           name='pictures'
@@ -156,7 +171,6 @@ const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
         name='description'
         id='comment'
         value={formState.description}
-        rows={4}
         onChange={(e) => {
           handleFieldChange({ ...formState, description: e.target.value })
         }}
@@ -222,34 +236,45 @@ const MushroomForm = ({ session, mushroomEdit }: FormProps) => {
       <textarea
         name='edibilityNotes'
         id='edibilityNotes'
-        rows={2}
         value={formState.edibilityNotes}
         onChange={(e) =>
           handleFieldChange({ ...formState, edibilityNotes: e.target.value })
         }
       />
-      {mushroomEdit ? (
-        <button
-          type='submit'
-          onClick={async (e) => {
-            e.preventDefault()
-            await updateMushroom()
-          }}
-        >
-          Submit update.
-        </button>
-      ) : (
-        <button
-          type='submit'
-          onClick={async (e) => {
-            e.preventDefault()
-            await uploadPhoto()
-            await addMushroom()
-          }}
-        >
-          Submit
-        </button>
-      )}
+      <div className={styles.buttonWrapper}>
+        {mushroomEdit ? (
+          <div className={styles.editButtons}>
+            <button
+              onClick={async () => {
+                await setToggleEdit(false)
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type='submit'
+              onClick={async (e) => {
+                e.preventDefault()
+                await updateMushroom()
+              }}
+            >
+              Save 🍄
+            </button>
+          </div>
+        ) : (
+          <button
+            type='submit'
+            onClick={async (e) => {
+              e.preventDefault()
+              await uploadPhoto()
+              await addMushroom()
+              await setToggleEdit(false)
+            }}
+          >
+            Submit
+          </button>
+        )}
+      </div>
     </div>
   )
 }

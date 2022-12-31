@@ -1,0 +1,60 @@
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: var(--font-size-l);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  input {
+    line-height: var(--font-size-l);
+    border-radius: var(--border-radius);
+    border: 1px solid black;
+    margin-bottom: 8px;
+
+    &[type='file'] {
+      border: none;
+    }
+  }
+
+  fieldset {
+    display: flex;
+    border: 1px solid black;
+    border-radius: var(--border-radius);
+    padding-top: 1rem;
+    justify-content: space-around;
+    margin-bottom: 8px;
+    label {
+      font-size: var(--font-size);
+    }
+  }
+
+  textarea {
+    border: 1px solid black;
+    border-radius: var(--border-radius);
+    resize: none;
+    overflow: hidden;
+    margin-bottom: 8px;
+    min-height: 100px;
+    height: 100%;
+  }
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.editButtons {
+  position: relative;
+  height: 40px;
+  margin: 15px;
+  button {
+    margin: 0 25px;
+  }
+  button:first-child {
+    color: red;
+  }
+}

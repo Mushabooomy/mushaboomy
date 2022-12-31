@@ -14,7 +14,7 @@ const Mushrooms = () => {
 
   useEffect(() => {
     handleGetAll(supabase, setMushrooms)
-  }, [activeMushroom])
+  }, [])
 
   useEffect(() => {
     console.log('reload')
