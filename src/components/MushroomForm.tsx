@@ -9,21 +9,21 @@ import {
   Dispatch,
   SetStateAction,
 } from 'react'
-import { handleCreate, handleUpdate } from '../../utils/db'
+import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
 
 interface FormProps {
   session: Session
   mushroomEdit?: Mushroom
   setToggleEdit: Dispatch<SetStateAction<boolean>>
-  toggleExpanded: () => void
+  setMushrooms: React.Dispatch<React.SetStateAction<Mushroom[] | []>>
 }
 
 const MushroomForm = ({
   session,
   mushroomEdit,
   setToggleEdit,
-  toggleExpanded,
+  setMushrooms,
 }: FormProps) => {
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
@@ -63,6 +63,8 @@ const MushroomForm = ({
   const updateMushroom = async () => {
     const mushroom: Mushroom = formState
     await handleUpdate(supabase, mushroom)
+    await handleGetAll(supabase, setMushrooms)
+    setToggleEdit(false)
     clearForm()
   }
 
@@ -245,8 +247,8 @@ const MushroomForm = ({
         {mushroomEdit ? (
           <div className={styles.editButtons}>
             <button
-              onClick={async () => {
-                await setToggleEdit(false)
+              onClick={() => {
+                setToggleEdit(false)
               }}
             >
               Cancel
@@ -268,7 +270,6 @@ const MushroomForm = ({
               e.preventDefault()
               await uploadPhoto()
               await addMushroom()
-              await setToggleEdit(false)
             }}
           >
             Submit

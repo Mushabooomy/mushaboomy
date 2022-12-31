@@ -1,41 +1,51 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Session, SupabaseClient } from '@supabase/supabase-js'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
-import { handleDeleteOne, handleDeletePhoto } from '../../utils/db'
+import {
+  handleDeleteOne,
+  handleDeletePhoto,
+  handleGetAll,
+} from '../../utils/db'
 import MushroomForm from './MushroomForm'
 
 type Props = {
   mushroom: Mushroom
   expandChange: (id: number | undefined) => void
-  activeMushroom: number | undefined
   supabase: SupabaseClient
   setActiveMushroom: React.Dispatch<React.SetStateAction<number | undefined>>
+  setMushrooms: React.Dispatch<React.SetStateAction<Mushroom[] | []>>
   session: Session
 }
 
 const MushroomView = ({
   mushroom,
   expandChange,
-  activeMushroom,
   supabase,
   setActiveMushroom,
+  setMushrooms,
   session,
 }: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
   const [toggleEdit, setToggleEdit] = useState(false)
 
-  useEffect(() => {
-    console.log('init', activeMushroom)
-  }, [])
-
   function toggleExpanded() {
     if (ref.current?.open) {
       expandChange(undefined)
-      // setToggle(!toggle)
     } else {
       expandChange(mushroom.id)
     }
+  }
+
+  function deleteMushroom() {
+    console.log('hello')
+    Promise.all([
+      handleDeleteOne(supabase, mushroom.id),
+      handleDeletePhoto(supabase, mushroom.photoUrl),
+    ]).then(() => {
+      handleGetAll(supabase, setMushrooms)
+      setActiveMushroom(undefined)
+    })
   }
 
   return (
@@ -73,18 +83,7 @@ const MushroomView = ({
                 >
                   Edit 🍄
                 </button>
-                <button
-                  onClick={() => {
-                    Promise.all([
-                      handleDeleteOne(supabase, mushroom.id),
-                      handleDeletePhoto(supabase, mushroom.photoUrl),
-                    ]).then(() => {
-                      setActiveMushroom(undefined)
-                    })
-                  }}
-                >
-                  Delete 🍄
-                </button>
+                <button onClick={() => deleteMushroom()}>Delete 🍄</button>
               </div>
             </div>
           </div>
@@ -96,7 +95,7 @@ const MushroomView = ({
           session={session}
           mushroomEdit={mushroom}
           setToggleEdit={setToggleEdit}
-          toggleExpanded={toggleExpanded}
+          setMushrooms={setMushrooms}
         />
       ) : null}
     </>

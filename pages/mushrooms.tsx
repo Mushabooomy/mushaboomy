@@ -48,10 +48,10 @@ const Mushrooms = () => {
               {...mushroom}
               key={mushroom.id}
               expandChange={changeFocus}
-              activeMushroom={activeMushroom}
               supabase={supabase}
               setActiveMushroom={setActiveMushroom}
               session={session}
+              setMushrooms={setMushrooms}
             />
           ))}
         </div>
