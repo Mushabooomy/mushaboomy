@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
-import { Mushroom } from '../../pages/addmushroom'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
+import { useSession } from '@supabase/auth-helpers-react'
 
 type Props = {
   mushroom: Mushroom
@@ -10,6 +10,7 @@ type Props = {
 }
 
 const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
+  const session = useSession()
   const ref = useRef<HTMLDetailsElement | null>(null)
 
   useEffect(() => {
@@ -34,20 +35,21 @@ const MushroomView = ({ mushroom, expandChange, activeMushroom }: Props) => {
             fill={true}
           />
         </div>
-        <div className='titles'>
+        <div className="titles">
           <h3>{mushroom.scientificName}</h3>
           <h4>{mushroom.commonName}</h4>
         </div>
       </summary>
       <div className={styles.content}>
-        <p className='description'>{mushroom.description}</p>
+        <p className="description">{mushroom.description}</p>
         <h5>Edibility</h5>
-        <p className='edibility'>{mushroom.edibility}</p>
+        <p className="edibility">{mushroom.edibility}</p>
         <h5>Edibility Notes</h5>
-        <p className='edibilityNotes'>{mushroom.edibilityNotes}</p>
+        <p className="edibilityNotes">{mushroom.edibilityNotes}</p>
         <h5>Spore Print</h5>
-        <p className='sportPrint'>{mushroom.sporePrint}</p>
+        <p className="sportPrint">{mushroom.sporePrint}</p>
       </div>
+      {session ? <button>edit</button> : null}
     </details>
   )
 }
