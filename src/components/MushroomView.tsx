@@ -30,8 +30,10 @@ const MushroomView = ({
   const [toggleEdit, setToggleEdit] = useState(false)
 
   function toggleExpanded() {
-    if (ref.current?.open) {
+    if (ref.current?.open && !toggleEdit) {
       expandChange(undefined)
+    } else if (ref.current?.open && toggleEdit) {
+      setToggleEdit(false)
     } else {
       expandChange(mushroom.id)
     }
@@ -50,21 +52,21 @@ const MushroomView = ({
 
   return (
     <>
-      {!toggleEdit ? (
-        <details ref={ref} className={styles.details}>
-          <summary onClick={toggleExpanded}>
-            <div className={styles.thumbnailWrapper}>
-              <Image
-                src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${mushroom.photoUrl}`}
-                alt={mushroom.scientificName}
-                fill={true}
-              />
-            </div>
-            <div className='titles'>
-              <h3>{mushroom.scientificName}</h3>
-              <h4>{mushroom.commonName}</h4>
-            </div>
-          </summary>
+      <details ref={ref} className={styles.details}>
+        <summary onClick={toggleExpanded}>
+          <div className={styles.thumbnailWrapper}>
+            <Image
+              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${mushroom.photoUrl}`}
+              alt={mushroom.scientificName}
+              fill={true}
+            />
+          </div>
+          <div className='titles'>
+            <h3>{mushroom.scientificName}</h3>
+            <h4>{mushroom.commonName}</h4>
+          </div>
+        </summary>
+        {!toggleEdit ? (
           <div className={styles.content}>
             <h5>Description</h5>
             <p className='description'>{mushroom.description}</p>
@@ -87,17 +89,17 @@ const MushroomView = ({
               </div>
             </div>
           </div>
-        </details>
-      ) : null}
+        ) : null}
 
-      {toggleEdit ? (
-        <MushroomForm
-          session={session}
-          mushroomEdit={mushroom}
-          setToggleEdit={setToggleEdit}
-          setMushrooms={setMushrooms}
-        />
-      ) : null}
+        {toggleEdit ? (
+          <MushroomForm
+            session={session}
+            mushroomEdit={mushroom}
+            setToggleEdit={toggleExpanded}
+            setMushrooms={setMushrooms}
+          />
+        ) : null}
+      </details>
     </>
   )
 }
