@@ -1,5 +1,6 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
+import { useSession } from '@supabase/auth-helpers-react'
 import styles from '../../styles/FormView.module.scss'
 import {
   ChangeEvent,
@@ -15,16 +16,15 @@ import Alert from './Alert'
 interface FormProps {
   setToggleEdit?: Dispatch<SetStateAction<boolean>>
   setMushrooms?: React.Dispatch<SetStateAction<Mushroom[] | []>>
-  session: Session
   mushroomEdit?: Mushroom
 }
 
 const MushroomForm = ({
-  session,
   mushroomEdit,
   setToggleEdit,
   setMushrooms,
 }: FormProps) => {
+  const session = useSession()
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)

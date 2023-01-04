@@ -17,7 +17,7 @@ const AddMushroom = () => {
         />
       ) : (
         <div>
-          <MushroomForm session={session} />
+          <MushroomForm />
         </div>
       )}
     </div>

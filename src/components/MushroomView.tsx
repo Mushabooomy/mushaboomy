@@ -15,7 +15,6 @@ type Props = {
   supabase: SupabaseClient
   setActiveMushroom: React.Dispatch<React.SetStateAction<number | undefined>>
   setMushrooms: React.Dispatch<React.SetStateAction<Mushroom[] | []>>
-  session: Session
 }
 
 const MushroomView = ({
@@ -24,7 +23,6 @@ const MushroomView = ({
   supabase,
   setActiveMushroom,
   setMushrooms,
-  session,
 }: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
   const [toggleEdit, setToggleEdit] = useState(false)
@@ -93,7 +91,6 @@ const MushroomView = ({
 
         {toggleEdit ? (
           <MushroomForm
-            session={session}
             mushroomEdit={mushroom}
             setToggleEdit={toggleExpanded}
             setMushrooms={setMushrooms}
