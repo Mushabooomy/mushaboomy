@@ -1,25 +1,21 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useSession } from '@supabase/auth-helpers-react'
 import MushroomForm from '../src/components/MushroomForm'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 const AddMushroom = () => {
+  const router = useRouter()
   const session = useSession()
-  const supabase = useSupabaseClient()
+
+  useEffect(() => {
+    !session ? router.push('/') : null
+  })
 
   return (
     <div>
-      {!session ? (
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme='default'
-        />
-      ) : (
-        <div>
-          <MushroomForm />
-        </div>
-      )}
+      <div>
+        <MushroomForm />
+      </div>
     </div>
   )
 }

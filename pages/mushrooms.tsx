@@ -1,4 +1,3 @@
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useEffect, useState } from 'react'
 import MushroomView from '../src/components/MushroomView'
