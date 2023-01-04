@@ -34,14 +34,14 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
-  setMushrooms: {
+  setMushrooms?: {
     (value: SetStateAction<Mushroom[]>): void
   }
 ) {
   try {
     const { data, error } = await supabase.from('mushroom').select('*')
     if (error) throw error
-    setMushrooms(data)
+    setMushrooms?.(data)
   } catch (error) {
     alert('Error loading mushroom records.')
     console.log(error)

@@ -13,10 +13,10 @@ import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
 
 interface FormProps {
+  setToggleEdit?: Dispatch<SetStateAction<boolean>>
+  setMushrooms?: React.Dispatch<SetStateAction<Mushroom[] | []>>
   session: Session
   mushroomEdit?: Mushroom
-  setToggleEdit: Dispatch<SetStateAction<boolean>>
-  setMushrooms: React.Dispatch<React.SetStateAction<Mushroom[] | []>>
 }
 
 const MushroomForm = ({
@@ -64,7 +64,7 @@ const MushroomForm = ({
     const mushroom: Mushroom = formState
     await handleUpdate(supabase, mushroom)
     await handleGetAll(supabase, setMushrooms)
-    setToggleEdit(false)
+    setToggleEdit?.(false)
     clearForm()
   }
 
@@ -248,7 +248,7 @@ const MushroomForm = ({
           <div className={styles.editButtons}>
             <button
               onClick={() => {
-                setToggleEdit(false)
+                setToggleEdit?.(false)
               }}
             >
               Cancel
