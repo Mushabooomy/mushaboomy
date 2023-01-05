@@ -5,14 +5,14 @@
   label {
     font-size: var(--font-size-l);
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
   }
 
   input {
     line-height: var(--font-size-l);
     border-radius: var(--border-radius);
     border: 1px solid black;
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
 
     &[type='file'] {
       border: none;
@@ -25,7 +25,7 @@
     border-radius: var(--border-radius);
     padding-top: 1rem;
     justify-content: space-around;
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
     label {
       font-size: var(--font-size);
     }
@@ -36,8 +36,8 @@
     border-radius: var(--border-radius);
     resize: none;
     overflow: hidden;
-    margin-bottom: 8px;
-    min-height: 100px;
+    margin-bottom: .5rem;
+    min-height: 6.5rem;
     height: 100%;
   }
 }
@@ -49,10 +49,10 @@
 
 .editButtons {
   position: relative;
-  height: 40px;
-  margin: 15px;
+  height: 2.5rem;
+  margin: 1rem;
   button {
-    margin: 0 25px;
+    margin: 0 1.5rem;
   }
   button:first-child {
     color: red;

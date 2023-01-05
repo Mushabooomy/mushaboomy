@@ -144,16 +144,16 @@ ul.mushroomsList {
   display: flex;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 50rem) {
   .wrapper {
     align-items: flex-start;
 
     > div {
-      width: 480px;
+      width: 30rem;
     }
   }
 
   nav {
-    width: 480px;
+    width: 30rem;
   }
 }
