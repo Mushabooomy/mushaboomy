@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Session, SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient } from '@supabase/supabase-js'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
 import {
