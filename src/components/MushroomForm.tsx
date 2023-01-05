@@ -1,5 +1,4 @@
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Session } from '@supabase/supabase-js'
 import { useSession } from '@supabase/auth-helpers-react'
 import styles from '../../styles/FormView.module.scss'
 import {
