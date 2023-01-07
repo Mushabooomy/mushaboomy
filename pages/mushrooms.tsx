@@ -14,7 +14,7 @@ const Mushrooms = () => {
   )
 
   useEffect(() => {
-    handleGetAll(supabase, setMushrooms)
+    handleGetAll(supabase, session, setMushrooms)
   }, [])
 
   useEffect(() => {

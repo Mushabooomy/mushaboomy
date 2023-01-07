@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { useSession } from '@supabase/auth-helpers-react'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
 import {
@@ -26,6 +27,7 @@ const MushroomView = ({
 }: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
   const [toggleEdit, setToggleEdit] = useState(false)
+  const session = useSession()
 
   function toggleExpanded() {
     if (ref.current?.open && !toggleEdit) {
@@ -54,7 +56,7 @@ const MushroomView = ({
         <summary onClick={toggleExpanded}>
           <div className={styles.thumbnailWrapper}>
             <Image
-              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${mushroom.photoUrl}`}
+              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session.user.id}/${mushroom.photoUrl}`}
               alt={mushroom.scientificName}
               fill={true}
             />

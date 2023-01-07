@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
+import Image from 'next/image'
 
 interface FormProps {
   setToggleEdit?: Dispatch<SetStateAction<boolean>>
@@ -27,7 +28,7 @@ const MushroomForm = ({
   const supabase = useSupabaseClient()
   const [photoFile, setPhotoFile] = useState<File | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
-  // const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
   const [formState, setFormState] = useState<Mushroom>({
     scientificName: '',
@@ -40,6 +41,7 @@ const MushroomForm = ({
     user_id: session?.user.id,
     user_email: session?.user.email,
   })
+  const [isActive, setActive] = useState(false)
   const [alertState, setAlertState] = useState<AlertProps>({
     message: '',
     type: 'none',
@@ -53,10 +55,10 @@ const MushroomForm = ({
 
   const addMushroom = async () => {
     const mushroom: Mushroom = formState
-    // setLoading(true)
+    setLoading(true)
     await handleCreate(supabase, mushroom)
     clearForm()
-    // setLoading(false)
+    setLoading(false)
   }
 
   const updateMushroom = async () => {
@@ -71,7 +73,7 @@ const MushroomForm = ({
     setPhotoUploading(true)
     try {
       const { error: uploadError } = await supabase.storage
-        .from('mushroom-photos')
+        .from(`mushroom-photos/${session.user.id}`)
         .upload(formState.photoUrl, photoFile!, {
           cacheControl: '3600',
           upsert: false,
@@ -114,6 +116,10 @@ const MushroomForm = ({
     setPhotoUrl(file.name)
   }
 
+  const handleImageDelete = () => {
+    setActive(!isActive)
+  }
+
   const handleFieldChange = (object: Mushroom) => {
     setFormState(object)
   }
@@ -128,7 +134,6 @@ const MushroomForm = ({
       edibilityNotes: '',
       photoUrl: '',
     })
-
     ref.current!.value = ''
   }
 
@@ -155,7 +160,28 @@ const MushroomForm = ({
           handleFieldChange({ ...formState, commonName: e.target.value })
         }}
       />
-      <label htmlFor='pictures'>Picture</label>
+      <label htmlFor='pictures'>Pictures</label>
+      {formState.photoUrl ? (
+        <div
+          className={`${styles.deleteImage} ${isActive ? styles.active : null}`}
+          onClick={handleImageDelete}
+        >
+          <div className={styles.deleteButton}>
+            <Image
+              alt='Delete image'
+              src={'/images/Delete-Button.svg'}
+              width={15}
+              height={15}
+            />
+          </div>
+          <Image
+            src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session.user.id}/${formState.photoUrl}`}
+            alt={formState.scientificName}
+            width={72}
+            height={72}
+          />
+        </div>
+      ) : null}
       {!photoUploading ? (
         <input
           name='pictures'

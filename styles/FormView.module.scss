@@ -1,47 +1,3 @@
-.formWrapper {
-  display: flex;
-  flex-direction: column;
-
-  label {
-    font-size: var(--font-size-l);
-    font-weight: 600;
-    margin-bottom: .5rem;
-  }
-
-  input {
-    line-height: var(--font-size-l);
-    border-radius: var(--border-radius);
-    border: 1px solid black;
-    margin-bottom: .5rem;
-
-    &[type='file'] {
-      border: none;
-    }
-  }
-
-  fieldset {
-    display: flex;
-    border: 1px solid black;
-    border-radius: var(--border-radius);
-    padding-top: 1rem;
-    justify-content: space-around;
-    margin-bottom: .5rem;
-    label {
-      font-size: var(--font-size);
-    }
-  }
-
-  textarea {
-    border: 1px solid black;
-    border-radius: var(--border-radius);
-    resize: none;
-    overflow: hidden;
-    margin-bottom: .5rem;
-    min-height: 6.5rem;
-    height: 100%;
-  }
-}
-
 .buttonWrapper {
   display: flex;
   justify-content: center;
@@ -56,5 +12,77 @@
   }
   button:first-child {
     color: red;
+  }
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: var(--font-size-l);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    line-height: var(--font-size-l);
+    border-radius: var(--border-radius);
+    border: 1px solid black;
+    margin-bottom: 0.5rem;
+
+    &[type='file'] {
+      border: none;
+    }
+  }
+
+  fieldset {
+    display: flex;
+    border: 1px solid black;
+    border-radius: var(--border-radius);
+    padding-top: 1rem;
+    justify-content: space-around;
+    margin-bottom: 0.5rem;
+    label {
+      font-size: var(--font-size);
+    }
+  }
+
+  textarea {
+    border: 1px solid black;
+    border-radius: var(--border-radius);
+    resize: none;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    min-height: 6.5rem;
+    height: 100%;
+  }
+}
+
+.active {
+  box-shadow: 0 0 0 3px var(--active-image);
+  border-radius: var(--border-radius);
+}
+
+.deleteImage {
+  position: relative;
+  height: 72px;
+  width: 72px;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  .deleteButton {
+    position: absolute;
+    right: 0;
+    margin-right: -5px;
+    margin-top: -5px;
+  }
+
+  img {
+    object-fit: cover;
+    margin-bottom: none;
+    border-radius: var(--border-radius);
   }
 }

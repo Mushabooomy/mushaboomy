@@ -34,12 +34,16 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
+  session,
   setMushrooms?: {
     (value: SetStateAction<Mushroom[]>): void
   }
 ) {
   try {
-    const { data, error } = await supabase.from('mushroom').select('*')
+    const { data, error } = await supabase
+      .from('mushroom')
+      .select('*')
+      .eq('user_id', session.user.id)
     if (error) throw error
     setMushrooms?.(data)
   } catch (error) {
