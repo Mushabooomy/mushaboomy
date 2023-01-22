@@ -40,12 +40,14 @@ const MushroomView = ({
   }
 
   function deleteMushroom() {
-    console.log('hello')
     Promise.all([
       handleDeleteOne(supabase, mushroom.id),
-      handleDeletePhoto(supabase, mushroom.photoUrl),
+      handleDeletePhoto(
+        supabase,
+        `${session?.user.id}/${mushroom.photoUrls[0]}`
+      ),
     ]).then(() => {
-      handleGetAll(supabase, setMushrooms)
+      handleGetAll(supabase, session, setMushrooms)
       setActiveMushroom(undefined)
     })
   }
@@ -56,7 +58,7 @@ const MushroomView = ({
         <summary onClick={toggleExpanded}>
           <div className={styles.thumbnailWrapper}>
             <Image
-              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session.user.id}/${mushroom.photoUrl}`}
+              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session?.user.id}/${mushroom.photoUrls[0]}`}
               alt={mushroom.scientificName}
               fill={true}
             />

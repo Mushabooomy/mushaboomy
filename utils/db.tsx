@@ -1,4 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient, Session } from '@supabase/supabase-js'
 import { SetStateAction } from 'react'
 
 export async function handleCreate(
@@ -17,13 +17,23 @@ export async function handleCreate(
 
 export async function handleUpdate(
   supabase: SupabaseClient,
-  mushroom: Mushroom
+  session: Session,
+  mushroom: Mushroom,
+  deleteImageArray: ImageArray | []
 ) {
   try {
+    //Update db record
     const { error } = await supabase
       .from('mushroom')
       .update(mushroom)
       .eq('id', mushroom.id)
+    //Delete selected image files
+    if (deleteImageArray.length > 0) {
+      const { error } = await supabase.storage
+        .from('mushroom-photos')
+        .remove(deleteImageArray)
+      if (error) throw error
+    }
     if (error) throw error
     alert('Mushroom record updated!')
   } catch (error) {
@@ -34,7 +44,7 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
-  session,
+  session: Session,
   setMushrooms?: {
     (value: SetStateAction<Mushroom[]>): void
   }
@@ -48,7 +58,7 @@ export async function handleGetAll(
     setMushrooms?.(data)
   } catch (error) {
     alert('Error loading mushroom records.')
-    console.log(error)
+    console.log({ error })
   }
 }
 
@@ -79,12 +89,12 @@ export async function handleDeleteOne(supabase: SupabaseClient, id?: number) {
 
 export async function handleDeletePhoto(
   supabase: SupabaseClient,
-  photoUrl: string
+  photoUrls: string
 ) {
   try {
     const { error } = await supabase.storage
       .from('mushroom-photos')
-      .remove([photoUrl])
+      .remove([`/${photoUrls}`])
     if (error) throw error
     alert('Mushroom photo deleted.')
   } catch (error) {

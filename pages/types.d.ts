@@ -6,7 +6,7 @@ interface Mushroom {
   sporePrint: string
   edibility: string
   edibilityNotes: string
-  photoUrl: string
+  photoUrls: string[]
   user_id?: string
   user_email?: string
 }
@@ -24,3 +24,10 @@ type AlertProps = {
   message: string
   type: 'error' | 'warning' | 'success' | 'none'
 }
+
+type ImageArray = [
+  {
+    isActive: boolean
+    photourl: string
+  }
+]
