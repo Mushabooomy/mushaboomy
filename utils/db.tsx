@@ -21,6 +21,7 @@ export async function handleUpdate(
   mushroom: Mushroom,
   deleteImageArray: ImageArray | []
 ) {
+  console.log({ mushroom })
   try {
     //Update db record
     const { error } = await supabase

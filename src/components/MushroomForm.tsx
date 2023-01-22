@@ -76,7 +76,7 @@ const MushroomForm = ({
   const updateMushroom = async () => {
     const deleteImageArray = editImageArray.reduce((acc, obj) => {
       if (obj.isActive === true) {
-        acc.push(obj.photoUrl)
+        acc.push(`${session?.user.id}/${obj.photoUrl}`)
       }
       return acc
     }, [])
@@ -88,10 +88,20 @@ const MushroomForm = ({
       return acc
     }, [])
 
-    console.log({ deleteImageArray })
-    console.log({ updatedPhotoUrls })
-    setFormState({ ...formState, photoUrls: updatedPhotoUrls })
-    await handleUpdate(supabase, session, mushroom, deleteImageArray)
+    const photoFileUrls = photoFiles
+      ? Array.from(photoFiles.files).map((file) => file.name)
+      : []
+
+    const allPhotoUrls = updatedPhotoUrls.concat(photoFileUrls)
+
+    // Concatenate updatedPhotoUrls with new file names.
+    await handleUpdate(
+      supabase,
+      session,
+      { ...formState, photoUrls: allPhotoUrls },
+      deleteImageArray
+    )
+    await uploadPhotos()
     await handleGetAll(supabase, session, setMushrooms)
     setToggleEdit?.(false)
     clearForm()
