@@ -17,9 +17,9 @@ export async function handleCreate(
 
 export async function handleUpdate(
   supabase: SupabaseClient,
-  session: Session,
+  session: Session | null,
   mushroom: Mushroom,
-  deleteImageArray: ImageArray | []
+  deleteImageArray: string[]
 ) {
   console.log({ mushroom })
   try {
@@ -45,7 +45,7 @@ export async function handleUpdate(
 
 export async function handleGetAll(
   supabase: SupabaseClient,
-  session: Session,
+  session: Session | null,
   setMushrooms?: {
     (value: SetStateAction<Mushroom[]>): void
   }
@@ -54,7 +54,7 @@ export async function handleGetAll(
     const { data, error } = await supabase
       .from('mushroom')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', session?.user.id)
     if (error) throw error
     setMushrooms?.(data)
   } catch (error) {

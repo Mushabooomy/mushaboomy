@@ -25,9 +25,9 @@ type AlertProps = {
   type: 'error' | 'warning' | 'success' | 'none'
 }
 
-type ImageArray = [
-  {
-    isActive: boolean
-    photourl: string
-  }
-]
+interface ImageObj {
+  isActive: boolean
+  photoUrl: string
+}
+
+type ImageArray = ImageObj[]

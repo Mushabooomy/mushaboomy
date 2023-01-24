@@ -8,6 +8,7 @@ import {
   useEffect,
   Dispatch,
   SetStateAction,
+  MouseEventHandler,
 } from 'react'
 import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
@@ -26,7 +27,7 @@ const MushroomForm = ({
 }: FormProps) => {
   const session = useSession()
   const supabase = useSupabaseClient()
-  const [photoFiles, setPhotoFiles] = useState<FileList | undefined>()
+  const [photoFiles, setPhotoFiles] = useState<DataTransfer | null>()
   const [photoUploading, setPhotoUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
@@ -43,7 +44,7 @@ const MushroomForm = ({
   })
 
   const isMountedRef = useRef(false)
-  const [editImageArray, setEditImageArray] = useState<ImageArray | []>([])
+  const [editImageArray, setEditImageArray] = useState<ImageArray>([])
 
   const [alertState, setAlertState] = useState<AlertProps>({
     message: '',
@@ -74,19 +75,25 @@ const MushroomForm = ({
   }
 
   const updateMushroom = async () => {
-    const deleteImageArray = editImageArray.reduce((acc, obj) => {
-      if (obj.isActive === true) {
-        acc.push(`${session?.user.id}/${obj.photoUrl}`)
-      }
-      return acc
-    }, [])
+    const deleteImageArray = editImageArray.reduce(
+      (acc: string[], obj: { isActive: boolean; photoUrl: string }) => {
+        if (obj.isActive === true) {
+          acc.push(`${session?.user.id}/${obj.photoUrl}`)
+        }
+        return acc
+      },
+      []
+    )
 
-    const updatedPhotoUrls = editImageArray.reduce((acc, obj) => {
-      if (!obj.isActive) {
-        acc.push(obj.photoUrl)
-      }
-      return acc
-    }, [])
+    const updatedPhotoUrls = editImageArray.reduce(
+      (acc: string[], obj: { isActive: boolean; photoUrl: string }) => {
+        if (!obj.isActive) {
+          acc.push(obj.photoUrl)
+        }
+        return acc
+      },
+      []
+    )
 
     const photoFileUrls = photoFiles
       ? Array.from(photoFiles.files).map((file) => file.name)
@@ -110,7 +117,7 @@ const MushroomForm = ({
   const uploadPhotos = async () => {
     if (photoFiles) {
       setPhotoUploading(true)
-      await Array.from(photoFiles.files).forEach(async (file: File) => {
+      Array.from(photoFiles.files).forEach(async (file) => {
         try {
           const { error: uploadError } = await supabase.storage
             .from(`mushroom-photos/${session?.user.id}`)
@@ -134,11 +141,12 @@ const MushroomForm = ({
     }
   }
 
+  //Takes in files from input and
   const setPhotos = (files: []) => {
     const photoFiles = new DataTransfer()
     const currentFileNames = formState.photoUrls
 
-    Array.from(files).forEach((photoFile) => {
+    Array.from(files).forEach((photoFile: File) => {
       const fileName = photoFile.name
       const file = new File([photoFile], photoFile.name)
       // Check if the file name is already on the mushroom record
@@ -174,8 +182,10 @@ const MushroomForm = ({
     setPhotos(files)
   }
 
-  const handleImageDelete = (e) => {
-    const photourl = e.target.dataset.photourl
+  const handleImageDelete = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const photourl = (e.target as HTMLInputElement).dataset.photourl
     const updatedEditImages = editImageArray.map((i) => {
       if (i.photoUrl === photourl) {
         return {
@@ -249,11 +259,13 @@ const MushroomForm = ({
             {editImageArray.map((i) => {
               return (
                 <div
-                  key={i}
+                  key={i.photoUrl}
                   className={`${styles.deleteImage} ${
                     i.isActive ? styles.active : null
                   }`}
-                  onClick={handleImageDelete}
+                  onClick={(e) => {
+                    handleImageDelete(e)
+                  }}
                 >
                   {i.isActive ? (
                     <div className={styles.deleteButton}>

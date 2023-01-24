@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { useSession } from '@supabase/auth-helpers-react'
+import { Session } from '@supabase/supabase-js'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
 import {
@@ -47,7 +48,8 @@ const MushroomView = ({
         `${session?.user.id}/${mushroom.photoUrls[0]}`
       ),
     ]).then(() => {
-      handleGetAll(supabase, session, setMushrooms)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      handleGetAll(supabase, session!, setMushrooms)
       setActiveMushroom(undefined)
     })
   }
@@ -70,6 +72,17 @@ const MushroomView = ({
         </summary>
         {!toggleEdit ? (
           <div className={styles.content}>
+            {mushroom.photoUrls.map((url) => {
+              return (
+                <Image
+                  key={url}
+                  src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session?.user.id}/${url}`}
+                  alt={mushroom.scientificName}
+                  width={72}
+                  height={72}
+                />
+              )
+            })}
             <h5>Description</h5>
             <p className='description'>{mushroom.description}</p>
             <h5>Edibility</h5>
