@@ -60,14 +60,39 @@
 }
 
 .active {
-  box-shadow: 0 0 0 3px var(--active-image);
+  box-shadow: 0 0 0 3px var(--active-image-color);
   border-radius: var(--border-radius);
+}
+
+.imagesWrapper {
+  display: flex;
+  margin: 5px;
+}
+
+.uploadImage {
+  margin: 5px;
+  border-radius: var(--border-radius);
+
+  :hover {
+    cursor: pointer;
+  }
+
+  img {
+    object-fit: cover;
+    margin-bottom: none;
+    border-radius: var(--border-radius);
+  }
+}
+
+.fileInput {
+  color: transparent;
 }
 
 .deleteImage {
   position: relative;
   height: 72px;
   width: 72px;
+  margin: 5px;
 
   :hover {
     cursor: pointer;

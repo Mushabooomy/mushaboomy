@@ -8,7 +8,6 @@ import {
   useEffect,
   Dispatch,
   SetStateAction,
-  MouseEventHandler,
 } from 'react'
 import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
@@ -27,7 +26,7 @@ const MushroomForm = ({
 }: FormProps) => {
   const session = useSession()
   const supabase = useSupabaseClient()
-  const [photoFiles, setPhotoFiles] = useState<DataTransfer | null>()
+  const [photoFiles, setPhotoFiles] = useState<[] | null>()
   const [photoUploading, setPhotoUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
@@ -42,7 +41,6 @@ const MushroomForm = ({
     user_id: session?.user.id,
     user_email: session?.user.email,
   })
-
   const isMountedRef = useRef(false)
   const [editImageArray, setEditImageArray] = useState<ImageArray>([])
 
@@ -95,9 +93,7 @@ const MushroomForm = ({
       []
     )
 
-    const photoFileUrls = photoFiles
-      ? Array.from(photoFiles.files).map((file) => file.name)
-      : []
+    const photoFileUrls = photoFiles ? photoFiles.map((file) => file.name) : []
 
     const allPhotoUrls = updatedPhotoUrls.concat(photoFileUrls)
 
@@ -117,7 +113,7 @@ const MushroomForm = ({
   const uploadPhotos = async () => {
     if (photoFiles) {
       setPhotoUploading(true)
-      Array.from(photoFiles.files).forEach(async (file) => {
+      photoFiles.forEach(async (file) => {
         try {
           const { error: uploadError } = await supabase.storage
             .from(`mushroom-photos/${session?.user.id}`)
@@ -143,7 +139,7 @@ const MushroomForm = ({
 
   //Takes in files from input and
   const setPhotos = (files: []) => {
-    const photoFiles = new DataTransfer()
+    const photoFiles = []
     const currentFileNames = formState.photoUrls
 
     Array.from(files).forEach((photoFile: File) => {
@@ -157,12 +153,13 @@ const MushroomForm = ({
         })
       } else {
         currentFileNames.push(fileName)
-        photoFiles.items.add(file)
+        photoFiles.push(file)
       }
     })
 
     setFormState({ ...formState, photoUrls: currentFileNames })
     setPhotoFiles(photoFiles)
+    ref.current.value = ''
   }
 
   const handlePhotoChange = async (e: ChangeEvent) => {
@@ -180,6 +177,14 @@ const MushroomForm = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const files: any = (e.target as HTMLInputElement).files
     setPhotos(files)
+  }
+
+  const handleAddPhoto = (file: File) => {
+    const newFileArray = photoFiles.filter((obj) => obj !== file)
+    setPhotoFiles(newFileArray)
+
+    const newPhotoUrls = formState.photoUrls.filter((url) => url !== file.name)
+    setFormState({ ...formState, photoUrls: newPhotoUrls })
   }
 
   const handleImageDelete = (
@@ -242,6 +247,8 @@ const MushroomForm = ({
       <label htmlFor='pictures'>Add Photos</label>
       {!photoUploading ? (
         <input
+          accept='image/*'
+          className={styles.fileInput}
           name='pictures'
           id='pictures'
           type='file'
@@ -252,10 +259,30 @@ const MushroomForm = ({
       ) : (
         <p>Loading . . . </p>
       )}
+      {photoFiles && photoFiles?.length > 0 ? (
+        <div className={styles.imagesWrapper}>
+          {photoFiles.map((file) => {
+            return (
+              <div
+                key={file.name}
+                className={styles.uploadImage}
+                onClick={() => handleAddPhoto(file)}
+              >
+                <Image
+                  alt='Delete image'
+                  src={URL.createObjectURL(file)}
+                  width={72}
+                  height={72}
+                />
+              </div>
+            )
+          })}
+        </div>
+      ) : null}
       {editImageArray.length > 0 ? (
         <div>
           <label htmlFor='delete pictures'>Select Photos to Delete</label>
-          <div>
+          <div className={styles.imagesWrapper}>
             {editImageArray.map((i) => {
               return (
                 <div
