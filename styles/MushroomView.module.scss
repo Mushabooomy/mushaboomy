@@ -4,12 +4,22 @@
   height: 4.5rem;
 }
 
+.imageWrapper {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    height: 100%;
+    width: auto;
+  }
+}
+
 .details {
   background-color: rgba($color: #000000, $alpha: 0.05);
   margin: 0.25rem 0;
   border-radius: 0.5rem;
-  opacity: 0.75;
-  transition: opacity 200ms ease-in, background-color 200ms ease-in;
+  transition: background-color 200ms ease-in;
 
   &:nth-of-type(even) {
     background-color: rgba($color: #ffffff, $alpha: 0.1);

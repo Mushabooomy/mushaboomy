@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import type { AppProps } from 'next/app'
 import '../styles/globals.scss'
+import 'swiper/css/bundle'
 import Head from 'next/head'
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider, Session } from '@supabase/auth-helpers-react'
-import Nav from '../src/components/nav';
+import Nav from '../src/components/nav'
 
 export default function App({
   Component,

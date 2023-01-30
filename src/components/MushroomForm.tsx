@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
-import Image from 'next/image'
+import NextImage from 'next/image'
 
 interface FormProps {
   setToggleEdit?: Dispatch<SetStateAction<boolean>>
@@ -50,13 +50,17 @@ const MushroomForm = ({
   })
 
   useEffect(() => {
+    console.log('reloaded')
+  }, [photoFiles])
+
+  useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true
       return
     }
     if (mushroomEdit) {
       const imageActiveArray = mushroomEdit.photoUrls.map((photo) => ({
-        photoUrl: photo,
+        photoUrl: photo.fileName,
         isActive: false,
       }))
       handleFieldChange(mushroomEdit)
@@ -67,43 +71,30 @@ const MushroomForm = ({
   const addMushroom = async () => {
     const mushroom: Mushroom = formState
     setLoading(true)
+    await uploadPhotos()
     await handleCreate(supabase, mushroom)
     clearForm()
     setLoading(false)
   }
 
   const updateMushroom = async () => {
-    const deleteImageArray = editImageArray.reduce(
-      (acc: string[], obj: { isActive: boolean; photoUrl: string }) => {
-        if (obj.isActive === true) {
-          acc.push(`${session?.user.id}/${obj.photoUrl}`)
-        }
-        return acc
-      },
-      []
+    const deleteImageArray = editImageArray
+      .filter(({ isActive }) => isActive)
+      .map(({ photoUrl }) => `${session?.user.id}/${photoUrl}`)
+
+    const updatedPhotoUrls = formState.photoUrls.filter(
+      ({ fileName }) =>
+        !editImageArray.find(({ photoUrl }) => photoUrl === fileName) ||
+        !editImageArray.find(({ photoUrl }) => photoUrl === fileName).isActive
     )
 
-    const updatedPhotoUrls = editImageArray.reduce(
-      (acc: string[], obj: { isActive: boolean; photoUrl: string }) => {
-        if (!obj.isActive) {
-          acc.push(obj.photoUrl)
-        }
-        return acc
-      },
-      []
-    )
-
-    const photoFileUrls = photoFiles ? photoFiles.map((file) => file.name) : []
-
-    const allPhotoUrls = updatedPhotoUrls.concat(photoFileUrls)
-
-    // Concatenate updatedPhotoUrls with new file names.
     await handleUpdate(
       supabase,
       session,
-      { ...formState, photoUrls: allPhotoUrls },
+      { ...formState, photoUrls: updatedPhotoUrls },
       deleteImageArray
     )
+
     await uploadPhotos()
     await handleGetAll(supabase, session, setMushrooms)
     setToggleEdit?.(false)
@@ -125,40 +116,44 @@ const MushroomForm = ({
             throw uploadError
           }
         } catch (uploadError) {
-          console.log({ uploadError })
           setAlertState({
             message: 'Error uploading photo.  Mushroom record not created',
             type: 'error',
           })
-          console.log(uploadError)
         }
       })
       setPhotoUploading(false)
     }
   }
 
-  //Takes in files from input and
-  const setPhotos = (files: []) => {
-    const photoFiles = []
-    const currentFileNames = formState.photoUrls
+  const setPhotos = async (files: []) => {
+    const incomingFilesArray = Array.from(files)
+    const newImageArray = formState.photoUrls
+    const currentFileNames = formState.photoUrls.map((obj) => obj.fileName)
+    const newFilesArray = photoFiles || []
 
-    Array.from(files).forEach((photoFile: File) => {
+    for (const photoFile of incomingFilesArray) {
       const fileName = photoFile.name
-      const file = new File([photoFile], photoFile.name)
-      // Check if the file name is already on the mushroom record
+
       if (currentFileNames.includes(fileName)) {
         setAlertState({
-          message: `File ${fileName} is already added on this mushroom record and will not be uploaded again`,
+          message: `File ${fileName} is already added and will not be uploaded again`,
           type: 'warning',
         })
       } else {
-        currentFileNames.push(fileName)
-        photoFiles.push(file)
-      }
-    })
+        const file = new File([photoFile], fileName)
+        newFilesArray.push(file)
 
-    setFormState({ ...formState, photoUrls: currentFileNames })
-    setPhotoFiles(photoFiles)
+        const img = new Image()
+        img.src = URL.createObjectURL(photoFile)
+        await img.decode()
+        const { width, height } = img
+        newImageArray.push({ fileName, width, height })
+      }
+    }
+
+    setPhotoFiles(newFilesArray)
+    setFormState({ ...formState, photoUrls: newImageArray })
     ref.current.value = ''
   }
 
@@ -176,18 +171,21 @@ const MushroomForm = ({
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const files: any = (e.target as HTMLInputElement).files
+
     setPhotos(files)
   }
 
-  const handleAddPhoto = (file: File) => {
+  const removePhotoFile = (file: File) => {
     const newFileArray = photoFiles.filter((obj) => obj !== file)
-    setPhotoFiles(newFileArray)
+    const newPhotoUrls = formState.photoUrls.filter(
+      (obj) => obj.fileName !== file.name
+    )
 
-    const newPhotoUrls = formState.photoUrls.filter((url) => url !== file.name)
+    setPhotoFiles(newFileArray)
     setFormState({ ...formState, photoUrls: newPhotoUrls })
   }
 
-  const handleImageDelete = (
+  const togglePendingDelete = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     const photourl = (e.target as HTMLInputElement).dataset.photourl
@@ -259,16 +257,24 @@ const MushroomForm = ({
       ) : (
         <p>Loading . . . </p>
       )}
-      {photoFiles && photoFiles?.length > 0 ? (
+      {photoFiles && photoFiles?.length > 0 && (
         <div className={styles.imagesWrapper}>
           {photoFiles.map((file) => {
             return (
               <div
                 key={file.name}
-                className={styles.uploadImage}
-                onClick={() => handleAddPhoto(file)}
+                className={styles.deleteImage}
+                onClick={() => removePhotoFile(file)}
               >
-                <Image
+                <div className={styles.deleteButton}>
+                  <NextImage
+                    alt='Delete image'
+                    src={'/images/minus.png'}
+                    width={15}
+                    height={15}
+                  />
+                </div>
+                <NextImage
                   alt='Delete image'
                   src={URL.createObjectURL(file)}
                   width={72}
@@ -278,7 +284,7 @@ const MushroomForm = ({
             )
           })}
         </div>
-      ) : null}
+      )}
       {editImageArray.length > 0 ? (
         <div>
           <label htmlFor='delete pictures'>Select Photos to Delete</label>
@@ -291,21 +297,21 @@ const MushroomForm = ({
                     i.isActive ? styles.active : null
                   }`}
                   onClick={(e) => {
-                    handleImageDelete(e)
+                    togglePendingDelete(e)
                   }}
                 >
                   {i.isActive ? (
                     <div className={styles.deleteButton}>
-                      <Image
+                      <NextImage
                         alt='Delete image'
-                        src={'/images/Delete-Button.svg'}
+                        src={'/images/delete.png'}
                         width={15}
                         height={15}
                       />
                     </div>
                   ) : null}
-                  <Image
-                    src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${session?.user.id}/${i.photoUrl}`}
+                  <NextImage
+                    src={`${process.env.NEXT_PUBLIC_PHOTO_BUCKET_URL}${session?.user.id}/${i.photoUrl}`}
                     alt={formState.scientificName}
                     width={72}
                     height={72}
@@ -406,8 +412,7 @@ const MushroomForm = ({
               type='submit'
               onClick={async (e) => {
                 e.preventDefault()
-                await uploadPhotos()
-                await updateMushroom()
+                updateMushroom()
               }}
             >
               Save 🍄
@@ -416,10 +421,9 @@ const MushroomForm = ({
         ) : (
           <button
             type='submit'
-            onClick={async (e) => {
+            onClick={(e) => {
               e.preventDefault()
-              await uploadPhotos()
-              await addMushroom()
+              addMushroom()
             }}
           >
             Submit

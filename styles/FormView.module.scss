@@ -59,11 +59,6 @@
   }
 }
 
-.active {
-  box-shadow: 0 0 0 3px var(--active-image-color);
-  border-radius: var(--border-radius);
-}
-
 .imagesWrapper {
   display: flex;
   margin: 5px;
