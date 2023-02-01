@@ -43,7 +43,7 @@ const MushroomView = ({
 
   function deleteMushroom() {
     const deleteImageArray = mushroom.photoUrls.map(
-      (photoUrl) => `${session?.user.id}/${photoUrl.fileName}`
+      (photoUrl: PhotoUrlsObj) => `${session?.user.id}/${photoUrl.fileName}`
     )
     Promise.all([handleDeleteOne(supabase, mushroom, deleteImageArray)]).then(
       () => {
@@ -60,7 +60,14 @@ const MushroomView = ({
         <summary onClick={toggleExpanded}>
           <div className={styles.thumbnailWrapper}>
             <Image
-              src={`${process.env.NEXT_PUBLIC_PHOTO_BUCKET_URL}${session?.user.id}/${mushroom.photoUrls[0].fileName}`}
+              src={
+                `${process.env.NEXT_PUBLIC_PHOTO_BUCKET_URL}${session?.user.id}/` +
+                `${
+                  mushroom && mushroom.photoUrls && mushroom.photoUrls[0]
+                    ? mushroom.photoUrls[0].fileName
+                    : ''
+                }`
+              }
               alt={mushroom.scientificName}
               fill={true}
             />
@@ -81,10 +88,13 @@ const MushroomView = ({
         {!toggleEdit ? (
           <div className={styles.content}>
             <Swiper
-              style={{
-                '--swiper-navigation-color': '#fff',
-                '--swiper-pagination-color': '#fff',
-              }}
+              style={
+                {
+                  '--swiper-navigation-color': '#fff',
+                  '--swiper-pagination-color': '#fff',
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } as any
+              }
               lazy={true}
               pagination={{
                 clickable: true,
@@ -93,7 +103,7 @@ const MushroomView = ({
               modules={[Lazy, Pagination, Navigation]}
               className='mySwiper'
             >
-              {mushroom.photoUrls.map((obj) => (
+              {mushroom.photoUrls.map((obj: PhotoUrlsObj) => (
                 <SwiperSlide key={obj.fileName}>
                   <div className={styles.imageWrapper}>
                     <Image

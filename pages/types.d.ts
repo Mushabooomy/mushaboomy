@@ -6,7 +6,7 @@ interface Mushroom {
   sporePrint: string
   edibility: string
   edibilityNotes: string
-  photoUrls: string[]
+  photoUrls: Array<{ fileName: string; width: number; height: number }>
   user_id?: string
   user_email?: string
 }
@@ -31,3 +31,9 @@ interface ImageObj {
 }
 
 type ImageArray = ImageObj[]
+
+interface PhotoUrlsObj {
+  fileName: string
+  width: number
+  height: number
+}

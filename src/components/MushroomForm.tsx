@@ -26,7 +26,7 @@ const MushroomForm = ({
 }: FormProps) => {
   const session = useSession()
   const supabase = useSupabaseClient()
-  const [photoFiles, setPhotoFiles] = useState<[] | null>()
+  const [photoFiles, setPhotoFiles] = useState<File[] | undefined>()
   const [photoUploading, setPhotoUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const ref = useRef<HTMLInputElement | null>(null)
@@ -59,8 +59,8 @@ const MushroomForm = ({
       return
     }
     if (mushroomEdit) {
-      const imageActiveArray = mushroomEdit.photoUrls.map((photo) => ({
-        photoUrl: photo.fileName,
+      const imageActiveArray = mushroomEdit.photoUrls.map(({ fileName }) => ({
+        photoUrl: fileName,
         isActive: false,
       }))
       handleFieldChange(mushroomEdit)
@@ -82,11 +82,12 @@ const MushroomForm = ({
       .filter(({ isActive }) => isActive)
       .map(({ photoUrl }) => `${session?.user.id}/${photoUrl}`)
 
-    const updatedPhotoUrls = formState.photoUrls.filter(
-      ({ fileName }) =>
-        !editImageArray.find(({ photoUrl }) => photoUrl === fileName) ||
-        !editImageArray.find(({ photoUrl }) => photoUrl === fileName).isActive
-    )
+    const updatedPhotoUrls = formState.photoUrls.filter(({ fileName }) => {
+      const matchingImage = editImageArray.find(
+        ({ photoUrl }) => photoUrl === fileName
+      )
+      return !matchingImage || !matchingImage.isActive
+    })
 
     await handleUpdate(
       supabase,
@@ -129,10 +130,12 @@ const MushroomForm = ({
   const setPhotos = async (files: []) => {
     const incomingFilesArray = Array.from(files)
     const newImageArray = formState.photoUrls
-    const currentFileNames = formState.photoUrls.map((obj) => obj.fileName)
+    const currentFileNames = formState.photoUrls.map(
+      (obj: PhotoUrlsObj) => obj.fileName
+    )
     const newFilesArray = photoFiles || []
 
-    for (const photoFile of incomingFilesArray) {
+    for (const photoFile of incomingFilesArray as File[]) {
       const fileName = photoFile.name
 
       if (currentFileNames.includes(fileName)) {
@@ -154,7 +157,7 @@ const MushroomForm = ({
 
     setPhotoFiles(newFilesArray)
     setFormState({ ...formState, photoUrls: newImageArray })
-    ref.current.value = ''
+    if (ref.current != null) ref.current.value = ''
   }
 
   const handlePhotoChange = async (e: ChangeEvent) => {
@@ -176,9 +179,13 @@ const MushroomForm = ({
   }
 
   const removePhotoFile = (file: File) => {
+    if (!photoFiles) {
+      return
+    }
+
     const newFileArray = photoFiles.filter((obj) => obj !== file)
     const newPhotoUrls = formState.photoUrls.filter(
-      (obj) => obj.fileName !== file.name
+      (obj: PhotoUrlsObj) => obj.fileName !== file.name
     )
 
     setPhotoFiles(newFileArray)
