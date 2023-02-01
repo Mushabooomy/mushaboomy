@@ -12,6 +12,7 @@ import {
 import { handleCreate, handleUpdate, handleGetAll } from '../../utils/db'
 import Alert from './Alert'
 import NextImage from 'next/image'
+import { useRouter } from 'next/router'
 
 interface FormProps {
   setToggleEdit?: Dispatch<SetStateAction<boolean>>
@@ -24,6 +25,7 @@ const MushroomForm = ({
   setToggleEdit,
   setMushrooms,
 }: FormProps) => {
+  const router = useRouter()
   const session = useSession()
   const supabase = useSupabaseClient()
   const [photoFiles, setPhotoFiles] = useState<File[] | undefined>()
@@ -75,6 +77,15 @@ const MushroomForm = ({
     await handleCreate(supabase, mushroom)
     clearForm()
     setLoading(false)
+    router.push('/mushrooms')
+  }
+
+  const handleCancelEdit = async () => {
+    //Todo: This get all is a hacky workaround to prevent images that were pending upload from showing up when the the mushroom is edited a second time. I feel like we should not need to me another handleGetAll call.
+    handleGetAll(supabase, session, setMushrooms)
+    if (setToggleEdit) {
+      setToggleEdit(false)
+    }
   }
 
   const updateMushroom = async () => {
@@ -105,24 +116,22 @@ const MushroomForm = ({
   const uploadPhotos = async () => {
     if (photoFiles) {
       setPhotoUploading(true)
-      photoFiles.forEach(async (file) => {
-        try {
-          const { error: uploadError } = await supabase.storage
-            .from(`mushroom-photos/${session?.user.id}`)
-            .upload(file.name, file, {
-              cacheControl: '3600',
-              upsert: false,
-            })
-          if (uploadError) {
-            throw uploadError
-          }
-        } catch (uploadError) {
-          setAlertState({
-            message: 'Error uploading photo.  Mushroom record not created',
-            type: 'error',
+      const promises = photoFiles.map(async (file) => {
+        return supabase.storage
+          .from(`mushroom-photos/${session?.user.id}`)
+          .upload(file.name, file, {
+            cacheControl: '3600',
+            upsert: true,
           })
-        }
       })
+      try {
+        await Promise.all(promises)
+      } catch (uploadError) {
+        setAlertState({
+          message: 'Error uploading photos.  Mushroom record not created',
+          type: 'error',
+        })
+      }
       setPhotoUploading(false)
     }
   }
@@ -133,7 +142,7 @@ const MushroomForm = ({
     const currentFileNames = formState.photoUrls.map(
       (obj: PhotoUrlsObj) => obj.fileName
     )
-    const newFilesArray = photoFiles || []
+    const newFilesArray = photoFiles ? photoFiles : []
 
     for (const photoFile of incomingFilesArray as File[]) {
       const fileName = photoFile.name
@@ -144,14 +153,12 @@ const MushroomForm = ({
           type: 'warning',
         })
       } else {
-        const file = new File([photoFile], fileName)
-        newFilesArray.push(file)
-
         const img = new Image()
         img.src = URL.createObjectURL(photoFile)
         await img.decode()
         const { width, height } = img
         newImageArray.push({ fileName, width, height })
+        newFilesArray.push(photoFile)
       }
     }
 
@@ -223,7 +230,9 @@ const MushroomForm = ({
       edibilityNotes: '',
       photoUrls: [],
     })
-    ref.current!.value = ''
+    if (ref.current) {
+      ref.current.value = ''
+    }
   }
 
   return (
@@ -409,8 +418,9 @@ const MushroomForm = ({
         {mushroomEdit ? (
           <div className={styles.editButtons}>
             <button
-              onClick={() => {
-                setToggleEdit?.(false)
+              onClick={(e) => {
+                e.preventDefault()
+                handleCancelEdit()
               }}
             >
               Cancel
