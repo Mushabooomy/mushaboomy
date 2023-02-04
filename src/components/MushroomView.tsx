@@ -1,13 +1,16 @@
 import React, { useRef, useState } from 'react'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { useSession } from '@supabase/auth-helpers-react'
 import styles from '../../styles/MushroomView.module.scss'
 import Image from 'next/image'
-import {
-  handleDeleteOne,
-  handleDeletePhoto,
-  handleGetAll,
-} from '../../utils/db'
+import { handleDeleteOne, handleGetAll } from '../../utils/db'
 import MushroomForm from './MushroomForm'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Lazy, Navigation, Pagination } from 'swiper'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/lazy'
 
 type Props = {
   mushroom: Mushroom
@@ -26,6 +29,7 @@ const MushroomView = ({
 }: Props) => {
   const ref = useRef<HTMLDetailsElement | null>(null)
   const [toggleEdit, setToggleEdit] = useState(false)
+  const session = useSession()
 
   function toggleExpanded() {
     if (ref.current?.open && !toggleEdit) {
@@ -38,14 +42,16 @@ const MushroomView = ({
   }
 
   function deleteMushroom() {
-    console.log('hello')
-    Promise.all([
-      handleDeleteOne(supabase, mushroom.id),
-      handleDeletePhoto(supabase, mushroom.photoUrl),
-    ]).then(() => {
-      handleGetAll(supabase, setMushrooms)
-      setActiveMushroom(undefined)
-    })
+    const deleteImageArray = mushroom.photoUrls.map(
+      (photoUrl: PhotoUrlsObj) => `${session?.user.id}/${photoUrl.fileName}`
+    )
+    Promise.all([handleDeleteOne(supabase, mushroom, deleteImageArray)]).then(
+      () => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        handleGetAll(supabase, session!, setMushrooms)
+        setActiveMushroom(undefined)
+      }
+    )
   }
 
   return (
@@ -54,26 +60,94 @@ const MushroomView = ({
         <summary onClick={toggleExpanded}>
           <div className={styles.thumbnailWrapper}>
             <Image
-              src={`https://cxyyaruovsakyjdwtljt.supabase.co/storage/v1/object/public/mushroom-photos/${mushroom.photoUrl}`}
+              src={
+                `${process.env.NEXT_PUBLIC_PHOTO_BUCKET_URL}${session?.user.id}/` +
+                `${
+                  mushroom && mushroom.photoUrls && mushroom.photoUrls[0]
+                    ? mushroom.photoUrls[0].fileName
+                    : ''
+                }`
+              }
               alt={mushroom.scientificName}
               fill={true}
             />
           </div>
           <div className='titles'>
-            <h3>{mushroom.scientificName}</h3>
-            <h4>{mushroom.commonName}</h4>
+            <h3>
+              {mushroom.scientificName
+                ? mushroom.scientificName
+                : 'Scientific Name: Unknown'}
+            </h3>
+            <h4>
+              {mushroom.commonName
+                ? mushroom.commonName
+                : 'Common Name: Unknown'}
+            </h4>
           </div>
         </summary>
         {!toggleEdit ? (
           <div className={styles.content}>
+            <Swiper
+              style={
+                {
+                  '--swiper-navigation-color': '#fff',
+                  '--swiper-pagination-color': '#fff',
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } as any
+              }
+              lazy={true}
+              pagination={{
+                clickable: true,
+              }}
+              navigation={true}
+              modules={[Lazy, Pagination, Navigation]}
+              className='mySwiper'
+            >
+              {mushroom.photoUrls.map((obj: PhotoUrlsObj) => (
+                <SwiperSlide key={obj.fileName}>
+                  <div className={styles.imageWrapper}>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_PHOTO_BUCKET_URL}${session?.user.id}/${obj.fileName}`}
+                      alt={mushroom.scientificName}
+                      width={obj.width}
+                      height={obj.height}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
             <h5>Description</h5>
-            <p className='description'>{mushroom.description}</p>
+            <p className='description'>
+              {mushroom.description ? (
+                mushroom.description
+              ) : (
+                <i>Edit to add description.</i>
+              )}
+            </p>
             <h5>Edibility</h5>
-            <p className='edibility'>{mushroom.edibility}</p>
+            <p className='edibility'>
+              {mushroom.edibility ? (
+                mushroom.edibility
+              ) : (
+                <i>Edit to add edibility.</i>
+              )}
+            </p>
             <h5>Edibility Notes</h5>
-            <p className='edibilityNotes'>{mushroom.edibilityNotes}</p>
+            <p className='edibilityNotes'>
+              {mushroom.edibilityNotes ? (
+                mushroom.edibilityNotes
+              ) : (
+                <i>Edit to add edibility notes.</i>
+              )}
+            </p>
             <h5>Spore Print</h5>
-            <p className='sporePrint'>{mushroom.sporePrint}</p>
+            <p className='sporePrint'>
+              {mushroom.sporePrint ? (
+                mushroom.sporePrint
+              ) : (
+                <i>Edit to add edibility notes.</i>
+              )}
+            </p>
             <div className={styles.edit}>
               <div className={styles.edit}>
                 <button

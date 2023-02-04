@@ -1,5 +1,5 @@
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import MushroomView from '../src/components/MushroomView'
 import { useRouter } from 'next/router'
 import { handleGetAll } from '../utils/db'
@@ -9,18 +9,26 @@ const Mushrooms = () => {
   const session = useSession()
   const supabase = useSupabaseClient()
   const [mushrooms, setMushrooms] = useState<Mushroom[]>([])
+  const isMountedRef = useRef(false)
   const [activeMushroom, setActiveMushroom] = useState<number | undefined>(
     undefined
   )
 
   useEffect(() => {
-    handleGetAll(supabase, setMushrooms)
-  }, [])
+    if (!isMountedRef.current) {
+      isMountedRef.current = true
+      return
+    }
+    if (session != null) {
+      handleGetAll(supabase, session, setMushrooms)
+    }
+  }, [session])
 
   useEffect(() => {
     console.log('reload')
   }, [activeMushroom])
 
+  // Todo: If user not logged in reroute to the login page.  Current behaviour on refresh brings user to the login screen.
   useEffect(() => {
     !session ? router.push('/') : null
   })

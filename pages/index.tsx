@@ -1,11 +1,21 @@
 import Login from '../src/components/Login'
 import { useSession } from '@supabase/auth-helpers-react'
+import { useEffect } from 'react'
 
 const Home = () => {
   const session = useSession()
+  const user = JSON.stringify(session?.user)
+
+  useEffect(() => {
+    const user = JSON.stringify(session?.user)
+    if (user) {
+      sessionStorage.setItem('user', user)
+    }
+  }, [])
+
   return (
     <>
-      {!session ? <Login /> : null}
+      {!user ? <Login /> : null}
       <div>
         <p>
           MUSH-A-BOOM! is a mushroom cataloging web application that is a useful
