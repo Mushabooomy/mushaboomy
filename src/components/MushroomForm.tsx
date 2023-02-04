@@ -238,6 +238,7 @@ const MushroomForm = ({
   return (
     <div className={styles.formWrapper}>
       <Alert {...alertState} />
+      {loading ? <span>Loading</span> : null}
       <label htmlFor='scientificName'>Scientific Name</label>
       <input
         type='text'
@@ -309,9 +310,8 @@ const MushroomForm = ({
               return (
                 <div
                   key={i.photoUrl}
-                  className={`${styles.deleteImage} ${
-                    i.isActive ? styles.active : null
-                  }`}
+                  className={`${styles.deleteImage} ${i.isActive ? styles.active : null
+                    }`}
                   onClick={(e) => {
                     togglePendingDelete(e)
                   }}

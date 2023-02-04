@@ -30,7 +30,7 @@
         },
         {
             "src": "/maskable.png",
-            "sizes": "192x192",
+            "sizes": "300x300",
             "type": "image/png",
             "purpose": "maskable"
         }
